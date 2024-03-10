@@ -9,10 +9,8 @@ spring:
     enabled: true
   application:
     name: backend
-  datasource:
-    password: postgres
-    username: postgres
-    url: jdbc:postgresql://localhost:5432/goodswarehouse-backend
+  profiles:
+    active: local
   jpa:
     open-in-view: false
     hibernate:
@@ -24,3 +22,25 @@ spring:
   output:
     ansi:
       enabled: always
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    password: postgres
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/goodswarehouse-backend
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    password: password
+    username: goodswarehouse-backend
+    url: jdbc:postgresql://postgres:5432/goodswarehouse-backend
