@@ -1,0 +1,617 @@
+{
+	"info": {
+		"_postman_id": "fce1bef2-871d-42c0-967d-42e251ddfc12",
+		"name": "GoodsWarehouse",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26688729"
+	},
+	"item": [
+		{
+			"name": "Create product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"product_2\",\n    \"article\": \"p-2\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 120.0,\n    \"count\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/product/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"product",
+						"create"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create product (id = 43417bf9-ccb2-4914-afa6-ffdf2a16a022)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"product_1\",\n    \"article\": \"p-1\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100.0,\n    \"count\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/product/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:39:01 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"43417bf9-ccb2-4914-afa6-ffdf2a16a022\",\n    \"article\": \"p-1\",\n    \"name\": \"product_1\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100,\n    \"count\": 1,\n    \"creationDate\": \"2024-03-11\",\n    \"lastModifiedDate\": null\n}"
+				},
+				{
+					"name": "Create product (id = 6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"product_2\",\n    \"article\": \"p-2\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 120.0,\n    \"count\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/product/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:40:26 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b\",\n    \"article\": \"p-2\",\n    \"name\": \"product_2\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 120,\n    \"count\": 1,\n    \"creationDate\": \"2024-03-11\",\n    \"lastModifiedDate\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "Get all products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/product/get/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"product",
+						"get",
+						"all"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get all products",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/product/get/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"get",
+								"all"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:40:44 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": \"43417bf9-ccb2-4914-afa6-ffdf2a16a022\",\n        \"article\": \"p-1\",\n        \"name\": \"product_1\",\n        \"description\": \"some description for product\",\n        \"category\": \"OTHER\",\n        \"price\": 100,\n        \"count\": 1,\n        \"creationDate\": \"2024-03-11\",\n        \"lastModifiedDate\": null\n    },\n    {\n        \"id\": \"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b\",\n        \"article\": \"p-2\",\n        \"name\": \"product_2\",\n        \"description\": \"some description for product\",\n        \"category\": \"OTHER\",\n        \"price\": 120,\n        \"count\": 1,\n        \"creationDate\": \"2024-03-11\",\n        \"lastModifiedDate\": null\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Get product by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/product/get/43417bf9-ccb2-4914-afa6-ffdf2a16a022",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"product",
+						"get",
+						"43417bf9-ccb2-4914-afa6-ffdf2a16a022"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get product by id (id = 43417bf9-ccb2-4914-afa6-ffdf2a16a022)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/product/get/43417bf9-ccb2-4914-afa6-ffdf2a16a022",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"get",
+								"43417bf9-ccb2-4914-afa6-ffdf2a16a022"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:41:03 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"43417bf9-ccb2-4914-afa6-ffdf2a16a022\",\n    \"article\": \"p-1\",\n    \"name\": \"product_1\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100,\n    \"count\": 1,\n    \"creationDate\": \"2024-03-11\",\n    \"lastModifiedDate\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "Update product",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b\",\n    \"description\": \"some description for product #2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/product/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"product",
+						"update"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Update product (fails with not unique article)",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"43417bf9-ccb2-4914-afa6-ffdf2a16a022\",\n    \"name\": \"product_1\",\n    \"article\": \"p-2\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100.0,\n    \"count\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/product/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"update"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:41:57 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Entity with such 'p-2' value already exists!\",\n    \"status\": 400\n}"
+				},
+				{
+					"name": "Update product (success update of article)",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"43417bf9-ccb2-4914-afa6-ffdf2a16a022\",\n    \"name\": \"product_1\",\n    \"article\": \"p-3\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100.0,\n    \"count\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/product/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"update"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:42:36 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"43417bf9-ccb2-4914-afa6-ffdf2a16a022\",\n    \"article\": \"p-3\",\n    \"name\": \"product_1\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100,\n    \"count\": 1,\n    \"creationDate\": \"2024-03-11\",\n    \"lastModifiedDate\": null\n}"
+				},
+				{
+					"name": "Update product (success update of count and last modified date)",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b\",\n    \"name\": \"product_2\",\n    \"article\": \"p-2\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100.0,\n    \"count\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/product/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"update"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:45:08 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b\",\n    \"article\": \"p-2\",\n    \"name\": \"product_2\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100,\n    \"count\": 10,\n    \"creationDate\": \"2024-03-11\",\n    \"lastModifiedDate\": \"2024-03-11T23:45:08.211278\"\n}"
+				},
+				{
+					"name": "Update product (short variant to update description or any other field)",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b\",\n    \"description\": \"some description for product #2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/product/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"update"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:46:21 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b\",\n    \"article\": \"p-2\",\n    \"name\": \"product_2\",\n    \"description\": \"some description for product #2\",\n    \"category\": \"OTHER\",\n    \"price\": 100,\n    \"count\": 10,\n    \"creationDate\": \"2024-03-11\",\n    \"lastModifiedDate\": \"2024-03-11T23:45:08.211278\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete product",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/product/delete/6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"product",
+						"delete",
+						"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Delete product (id = 6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b)",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/product/delete/6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"delete",
+								"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Mar 2024 19:48:05 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"6f8d9610-e0f4-4be9-9f9d-7b479ce4ca3b\",\n    \"article\": \"p-2\",\n    \"name\": \"product_2\",\n    \"description\": \"some description for product #2\",\n    \"category\": \"OTHER\",\n    \"price\": 100,\n    \"count\": 10,\n    \"creationDate\": \"2024-03-11\",\n    \"lastModifiedDate\": \"2024-03-11T23:45:08.211278\"\n}"
+				}
+			]
+		}
+	]
+}
