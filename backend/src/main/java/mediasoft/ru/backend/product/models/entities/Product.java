@@ -1,8 +1,10 @@
 package mediasoft.ru.backend.product.models.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,24 +19,28 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @NotNull
-    @Column(unique = true)
+
+    @Column(unique = true, nullable = false)
     private String article;
-    @NotNull
+
+    @Column(nullable = false)
     private String name;
-    @NotNull
+
     private String description;
-    @NotNull
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
-    @NotNull
+
+    @Column(nullable = false)
     private Double price;
-    @NotNull
+
+    @Column(nullable = false)
     private Integer count;
-    @NotNull
+
     @Column(updatable = false)
     private LocalDate creationDate;
-    @NotNull
+
     private LocalDateTime lastModifiedDate;
 
     @Transient
@@ -51,7 +57,7 @@ public class Product {
     }
 
     @PreUpdate
-    public void changeLastModified() {
+    public void changeLastModifiedDate() {
         if (!this.count.equals(this.previousCount))
             this.lastModifiedDate = LocalDateTime.now();
     }
