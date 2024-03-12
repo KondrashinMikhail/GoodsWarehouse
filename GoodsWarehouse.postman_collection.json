@@ -288,6 +288,50 @@
 					],
 					"cookie": [],
 					"body": "{\n    \"id\": \"43417bf9-ccb2-4914-afa6-ffdf2a16a022\",\n    \"article\": \"p-1\",\n    \"name\": \"product_1\",\n    \"description\": \"some description for product\",\n    \"category\": \"OTHER\",\n    \"price\": 100,\n    \"count\": 1,\n    \"creationDate\": \"2024-03-11\",\n    \"lastModifiedDate\": null\n}"
+				},
+				{
+					"name": "Get product by id (fails with non-existent id)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/product/get/55417bf9-ccb2-4914-afa6-ffdf2a16a033",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"product",
+								"get",
+								"55417bf9-ccb2-4914-afa6-ffdf2a16a033"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 12 Mar 2024 04:48:10 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Product with id - 55417bf9-ccb2-4914-afa6-ffdf2a16a033 not found!\",\n    \"status\": 400\n}"
 				}
 			]
 		},
