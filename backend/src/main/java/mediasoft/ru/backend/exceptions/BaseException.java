@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Базовая ошибка приложения, от которой наследуются все остальные ошибки. Содержит конструкторы для установки сообщения и статуса ошибки.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
@@ -26,6 +29,11 @@ public class BaseException extends RuntimeException {
         this.status = status;
     }
 
+    /**
+     * Генерация объекта с информацией об ошибке - сообщением и кодом.
+     *
+     * @return resData - объект с сообщением об ошибке и статусом.
+     */
     public Map<String, Object> formatResponseData() {
         HashMap<String, Object> resData = new HashMap<>();
         resData.put("message", this.message);
