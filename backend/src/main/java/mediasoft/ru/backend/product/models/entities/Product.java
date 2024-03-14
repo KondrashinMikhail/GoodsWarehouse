@@ -42,23 +42,4 @@ public class Product {
     private LocalDate creationDate;
 
     private LocalDateTime lastModifiedDate;
-
-    @Transient
-    private Integer previousCount;
-
-    @PostLoad
-    public void initializePreviousCount() {
-        this.previousCount = this.count;
-    }
-
-    @PrePersist
-    public void initializeDate() {
-        this.creationDate = LocalDate.now();
-    }
-
-    @PreUpdate
-    public void changeLastModifiedDate() {
-        if (!this.count.equals(this.previousCount))
-            this.lastModifiedDate = LocalDateTime.now();
-    }
 }

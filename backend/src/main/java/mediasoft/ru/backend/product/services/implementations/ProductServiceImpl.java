@@ -15,6 +15,7 @@ import mediasoft.ru.backend.product.services.interfaces.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,8 +34,8 @@ public class ProductServiceImpl implements ProductService {
      * После идет превращение в модель базы данных из DTO, подстановка даты создания как текущей даты. Поле последнего изменения количества не инициализируется.
      * Далее сохраняется в базу данных и сохраненный продукт с проставленным id конвертируется в DTO и возвращается.
      *
-     * @param createProductDTO - модель для создания продукта, которая содержит поля, необходимые для заполнения.
-     * @return - DTO продукта поле сохранения в базе данных, где проставлен id и дата создания.
+     * @param createProductDTO модель для создания продукта, которая содержит поля, необходимые для заполнения.
+     * @return DTO продукта поле сохранения в базе данных, где проставлен id и дата создания.
      */
     @Override
     public ProductDTO createProduct(CreateProductDTO createProductDTO) {
@@ -67,8 +68,8 @@ public class ProductServiceImpl implements ProductService {
      * Метод нужен для поиска сущности базы данных по id, если по переданному id нет сущности, то выбросится ошибка.
      * После того как сущность найдена, она конвертируется в DTO.
      *
-     * @param id - id продукта, который необходимо получить.
-     * @return - сущность продукта из базы данных, конвертированная в DTO.
+     * @param id id продукта, который необходимо получить.
+     * @return сущность продукта из базы данных, конвертированная в DTO.
      */
     @Override
     public ProductDTO getProductById(UUID id) {
@@ -82,8 +83,8 @@ public class ProductServiceImpl implements ProductService {
      * После идет проверка на существование полей в переданной сущности: если в переданной DTO нет каких-то полей, то вставляются значения этих полей, которые были до этого.
      * После измененная сущность сохраняется в базе данных и потом конвертируется в DTO.
      *
-     * @param updateProductDTO - DTO, содержащая необходимые поля для обновления существующей сущности.
-     * @return - обновленная сущность из базы данных, конвертированная в DTO.
+     * @param updateProductDTO DTO, содержащая необходимые поля для обновления существующей сущности.
+     * @return обновленная сущность из базы данных, конвертированная в DTO.
      */
     @Override
     public ProductDTO updateProduct(UpdateProductDTO updateProductDTO) {
@@ -115,9 +116,11 @@ public class ProductServiceImpl implements ProductService {
                 ? updateProductDTO.getPrice()
                 : sourceProduct.getPrice());
 
-        sourceProduct.setCount(updateProductDTO.getCount() != null
-                ? updateProductDTO.getCount()
-                : sourceProduct.getCount());
+        if (updateProductDTO.getCount() != null)
+            if (!Objects.equals(sourceProduct.getCount(), updateProductDTO.getCount())) {
+                sourceProduct.setCount(updateProductDTO.getCount());
+                sourceProduct.setLastModifiedDate(LocalDateTime.now());
+            }
 
         Product updatedProduct = productRepository.save(sourceProduct);
         return productMapper.mapToDTO(updatedProduct);
@@ -126,8 +129,8 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Метод нужен для удаления продукта из базы данных по переданному id.
      *
-     * @param id - id продукта, который необходимо удалить.
-     * @return - удаленная из базы данных сущность.
+     * @param id id продукта, который необходимо удалить.
+     * @return удаленная из базы данных сущность.
      */
     @Override
     public ProductDTO deleteProduct(UUID id) {
@@ -137,12 +140,11 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.mapToDTO(product);
     }
 
-
     /**
      * Метод нужен для поиска сущности базы данных по id, если по переданному id нет сущности, то выбросится ошибка.
      *
-     * @param id - id продукта, который необходимо получить.
-     * @return - сущность продукта из базы данных.
+     * @param id id продукта, который необходимо получить.
+     * @return сущность продукта из базы данных.
      */
     private Product getEntityById(UUID id) {
         return productRepository.findById(id).orElseThrow(() ->
@@ -152,8 +154,8 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Метод валидирует входную строку на пустоту и незаполненность.
      *
-     * @param str - исходная строка, которую необходимо проверить.
-     * @return - true, если строка является null, или пустая/не заполненная, false - в обратном случае.
+     * @param str исходная строка, которую необходимо проверить.
+     * @return true, если строка является null, или пустая/не заполненная, false - в обратном случае.
      */
     private boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty() || str.isBlank();
