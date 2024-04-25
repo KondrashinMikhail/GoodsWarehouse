@@ -1,10 +1,15 @@
 package mediasoft.ru.backend.product.services.implementations;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import mediasoft.ru.backend.exceptions.ContentNotFoundException;
-import mediasoft.ru.backend.exceptions.EmptyFieldException;
-import mediasoft.ru.backend.exceptions.UniqueFieldException;
+import mediasoft.ru.backend.criteria.Condition;
+import mediasoft.ru.backend.criteria.CriteriaOptions;
+import mediasoft.ru.backend.exceptions.*;
 import mediasoft.ru.backend.product.models.dto.CreateProductDTO;
 import mediasoft.ru.backend.product.models.dto.ProductDTO;
 import mediasoft.ru.backend.product.models.dto.UpdateProductDTO;
@@ -12,14 +17,17 @@ import mediasoft.ru.backend.product.models.entities.Product;
 import mediasoft.ru.backend.product.models.mappers.ProductMapper;
 import mediasoft.ru.backend.product.repositories.ProductRepository;
 import mediasoft.ru.backend.product.services.interfaces.ProductService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @Log4j2
@@ -138,6 +146,61 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(product);
         log.info(String.format("Deleted product with id - %s", id));
         return productMapper.mapToDTO(product);
+    }
+
+    @Override
+    public List<ProductDTO> searchProducts(Pageable pageable, List<Condition> conditions) {
+        final Specification<Product> specification = (root, query, criteriaBuilder) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+            for (Condition condition : conditions) {
+                CriteriaOptions currentOption = Stream.of(CriteriaOptions.values())
+                        .filter(option -> option.name().equalsIgnoreCase(condition.getOperation()) ||
+                                option.getOperation().equalsIgnoreCase(condition.getOperation()))
+                        .findFirst().orElseThrow(() -> new InvalidOperationException(condition.getOperation()));
+                try {
+                    Class<?> valueType = Product.class.getDeclaredField(condition.getField()).getType();
+                    predicates.add(getPredicate(currentOption, criteriaBuilder, root, condition, valueType));
+                } catch (NoSuchFieldException e) {
+                    throw new InvalidFieldException(condition.getField());
+                }
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return productRepository.findAll(specification, pageable).map(productMapper::mapToDTO).toList();
+    }
+
+    @SneakyThrows
+    private Predicate getPredicate(CriteriaOptions option, CriteriaBuilder criteriaBuilder, Root<Product> root, Condition condition, Class<?> valueType) {
+        if (condition.getValue() == null) throw new NullableValueException();
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        Method method = CriteriaBuilder.class.getMethod(option.getMethodName(), Expression.class, Expression.class);
+        MethodHandle methodHandle = lookup.unreflect(method);
+
+        if (option.getOperation().equals("~"))
+            return (Predicate) methodHandle.invoke(
+                    criteriaBuilder,
+                    root.get(condition.getField()),
+                    criteriaBuilder.literal("%" + condition.getValue().toString() + "%"));
+
+        if (valueType == Double.class)
+            return (Predicate) methodHandle.invoke(
+                    criteriaBuilder,
+                    root.get(condition.getField()),
+                    criteriaBuilder.literal(Double.parseDouble(condition.getValue().toString())));
+        else if (valueType == String.class)
+            return (Predicate) methodHandle.invoke(
+                    criteriaBuilder,
+                    root.get(condition.getField()),
+                    criteriaBuilder.literal(condition.getValue().toString()));
+        else if (valueType == LocalDateTime.class)
+            return (Predicate) methodHandle.invoke(
+                    criteriaBuilder,
+                    root.get(condition.getField()),
+                    criteriaBuilder.literal(LocalDateTime.parse(condition.getValue().toString())));
+        return null;
     }
 
     /**

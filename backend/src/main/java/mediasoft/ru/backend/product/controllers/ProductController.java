@@ -1,10 +1,12 @@
 package mediasoft.ru.backend.product.controllers;
 
 import lombok.AllArgsConstructor;
+import mediasoft.ru.backend.criteria.Condition;
 import mediasoft.ru.backend.product.models.dto.CreateProductDTO;
 import mediasoft.ru.backend.product.models.dto.ProductDTO;
 import mediasoft.ru.backend.product.models.dto.UpdateProductDTO;
 import mediasoft.ru.backend.product.services.interfaces.ProductService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,5 +42,12 @@ public class ProductController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable UUID id) {
         return ResponseEntity.ok(productService.deleteProduct(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductDTO>> searchProducts(
+            Pageable pageable,
+            @RequestBody List<Condition> conditions) {
+        return ResponseEntity.ok(productService.searchProducts(pageable, conditions));
     }
 }
