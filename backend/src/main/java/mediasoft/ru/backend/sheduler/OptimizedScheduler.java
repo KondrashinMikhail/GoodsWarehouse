@@ -13,6 +13,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 @Component
@@ -48,6 +51,11 @@ public class OptimizedScheduler implements SchedulerService {
                 double sourcePrice = product.getPrice();
                 double newPrice = sourcePrice + (sourcePrice * INCREASE_PERCENT);
                 product.setPrice(newPrice);
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("products.txt", true))) {
+                    writer.write(product.toString() + '\n');
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
 
             productRepository.saveAll(products);
