@@ -27,11 +27,13 @@ public class DefaultScheduler implements SchedulerService {
     @TimeMeasuring
     public void raisePrice() {
         List<Product> products = productRepository.findAll();
-        products.forEach(product -> {
-            double sourcePrice = product.getPrice();
-            double newPrice = sourcePrice + (sourcePrice * INCREASE_PERCENT);
-            product.setPrice(newPrice);
-        });
+        products.forEach(this::increasePrice);
         productRepository.saveAll(products);
+    }
+
+    private void increasePrice(Product product) {
+        double sourcePrice = product.getPrice();
+        double newPrice = sourcePrice + (sourcePrice * INCREASE_PERCENT);
+        product.setPrice(newPrice);
     }
 }

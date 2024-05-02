@@ -47,16 +47,7 @@ public class OptimizedScheduler implements SchedulerService {
 
             ArrayList<Product> products = productRepository.findAllWithLimit(optimalProductsPart, offset);
 
-            products.forEach(product -> {
-                double sourcePrice = product.getPrice();
-                double newPrice = sourcePrice + (sourcePrice * INCREASE_PERCENT);
-                product.setPrice(newPrice);
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter("products.txt", true))) {
-                    writer.write(product.toString() + '\n');
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+            products.forEach(this::increasePrice);
 
             productRepository.saveAll(products);
             entityManager.flush();
@@ -64,5 +55,16 @@ public class OptimizedScheduler implements SchedulerService {
         }
 
         session.setJdbcBatchSize(null);
+    }
+
+    private void increasePrice(Product product) {
+        double sourcePrice = product.getPrice();
+        double newPrice = sourcePrice + (sourcePrice * INCREASE_PERCENT);
+        product.setPrice(newPrice);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("products.txt", true))) {
+            writer.write(product.toString() + '\n');
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

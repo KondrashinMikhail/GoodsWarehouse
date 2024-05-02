@@ -1,6 +1,6 @@
 package mediasoft.ru.backend.aspects;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Aspect
 @Component
-@Log4j2
+@Slf4j
 public class TransactionalAspect extends TransactionSynchronizationAdapter {
     private UUID transactionUUID;
     private final ThreadLocal<Long> startTime = new ThreadLocal<>();
@@ -21,21 +21,13 @@ public class TransactionalAspect extends TransactionSynchronizationAdapter {
     public void registerTransactionSynchronization() {
         transactionUUID = UUID.randomUUID();
         log.info("Assigned transaction with UUID - {}", transactionUUID);
-        TransactionSynchronizationManager.registerSynchronization(this);
-    }
-
-
-    @Override
-    public void beforeCommit(boolean readOnly) {
-        log.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        log.info("Started transaction {} commit", transactionUUID);
         startTime.set(System.currentTimeMillis());
+        TransactionSynchronizationManager.registerSynchronization(this);
     }
 
     @Override
     public void afterCommit() {
         double executionTime = (System.currentTimeMillis() - startTime.get());
         log.info("Finished transaction {} commit in {} s", transactionUUID, executionTime / 1000.0);
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
 }
