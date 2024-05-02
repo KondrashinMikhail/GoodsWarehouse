@@ -1,17 +1,25 @@
 package mediasoft.ru.backend.product.services.implementations;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import mediasoft.ru.backend.CurrencyProvider;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
 import mediasoft.ru.backend.exceptions.EmptyFieldException;
 import mediasoft.ru.backend.exceptions.UniqueFieldException;
+import mediasoft.ru.backend.product.currency.services.implementations.CurrencyServiceClientImpl;
+import mediasoft.ru.backend.product.currency.services.implementations.CurrencyServiceMock;
 import mediasoft.ru.backend.product.models.dto.CreateProductDTO;
 import mediasoft.ru.backend.product.models.dto.ProductDTO;
 import mediasoft.ru.backend.product.models.dto.UpdateProductDTO;
+import mediasoft.ru.backend.product.models.entities.CurrencyEnum;
 import mediasoft.ru.backend.product.models.entities.Product;
 import mediasoft.ru.backend.product.models.mappers.ProductMapper;
 import mediasoft.ru.backend.product.repositories.ProductRepository;
 import mediasoft.ru.backend.product.services.interfaces.ProductService;
+import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,10 +31,40 @@ import java.util.UUID;
 
 @Service
 @Log4j2
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final CurrencyProvider currencyProvider;
+    private final CurrencyServiceClientImpl currencyServiceClientImpl;
+    private final CurrencyServiceMock currencyServiceMock;
+    @Autowired
+    private final ConcurrentMapCacheManager cacheManager;
+
+    @Value("${caching.service-connection-enabled}")
+    private Boolean CACHE_SERVICE_CONNECTION_ENABLED;
+    @Value("${caching.currency.name}")
+    private String CACHE_CURRENCY_NAME;
+    @Value("${caching.currency.key}")
+    private String CACHE_CURRENCY_KEY;
+
+    private void initializeCurrency(ProductDTO product) {
+        CurrencyEnum currentCurrency = currencyProvider.getCurrency();
+        JSONObject object = cacheManager.getCache(CACHE_CURRENCY_NAME).get(CACHE_CURRENCY_KEY, JSONObject.class);
+        if (object == null) {
+            object = CACHE_SERVICE_CONNECTION_ENABLED
+                    ? currencyServiceClientImpl.getCurrencyExchangeRate()
+                    : currencyServiceMock.getCurrencyExchangeRate();
+        }
+
+        product.setCurrency(currentCurrency);
+
+        double newPrice = currentCurrency == CurrencyEnum.RUB
+                ? product.getPrice()
+                : product.getPrice() / (Double) object.get(product.getCurrency().getExchangeRateField());
+
+        product.setPrice(newPrice);
+    }
 
     /**
      * Метод для создания продукта. Принимает DTO c полям, которые необходимы к заполнению при создании.
@@ -61,7 +99,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> getAllProducts() {
         List<Product> allProducts = productRepository.findAll();
-        return allProducts.stream().map(productMapper::mapToDTO).toList();
+        List<ProductDTO> dtoProducts = allProducts.stream()
+                .map(productMapper::mapToDTO).toList();
+        dtoProducts.forEach(this::initializeCurrency);
+        return dtoProducts;
     }
 
     /**
@@ -74,7 +115,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO getProductById(UUID id) {
         Product product = getEntityById(id);
-        return productMapper.mapToDTO(product);
+        ProductDTO productDTO = productMapper.mapToDTO(product);
+        initializeCurrency(productDTO);
+        return productDTO;
     }
 
     /**

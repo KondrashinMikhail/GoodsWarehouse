@@ -1,6 +1,9 @@
 package mediasoft.ru.backend.product.models.dto;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
+import mediasoft.ru.backend.product.models.entities.CurrencyEnum;
 import mediasoft.ru.backend.product.models.entities.ProductCategory;
 
 import java.time.LocalDate;
@@ -21,4 +24,6 @@ public class ProductDTO {
     private Integer count;
     private LocalDate creationDate;
     private LocalDateTime lastModifiedDate;
+    @Enumerated(EnumType.STRING)
+    private CurrencyEnum currency;
 }
