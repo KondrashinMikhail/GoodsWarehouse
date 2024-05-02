@@ -4,7 +4,6 @@ import mediasoft.ru.backend.criteria.Condition;
 import mediasoft.ru.backend.product.models.dto.CreateProductDTO;
 import mediasoft.ru.backend.product.models.dto.ProductDTO;
 import mediasoft.ru.backend.product.models.dto.UpdateProductDTO;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

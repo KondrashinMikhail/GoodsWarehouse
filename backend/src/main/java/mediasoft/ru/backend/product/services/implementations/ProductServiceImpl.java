@@ -9,7 +9,12 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import mediasoft.ru.backend.criteria.Condition;
 import mediasoft.ru.backend.criteria.CriteriaOptions;
-import mediasoft.ru.backend.exceptions.*;
+import mediasoft.ru.backend.exceptions.ContentNotFoundException;
+import mediasoft.ru.backend.exceptions.EmptyFieldException;
+import mediasoft.ru.backend.exceptions.InvalidFieldException;
+import mediasoft.ru.backend.exceptions.InvalidOperationException;
+import mediasoft.ru.backend.exceptions.NullableValueException;
+import mediasoft.ru.backend.exceptions.UniqueFieldException;
 import mediasoft.ru.backend.product.models.dto.CreateProductDTO;
 import mediasoft.ru.backend.product.models.dto.ProductDTO;
 import mediasoft.ru.backend.product.models.dto.UpdateProductDTO;
@@ -26,7 +31,11 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Service
@@ -179,7 +188,7 @@ public class ProductServiceImpl implements ProductService {
         Method method = CriteriaBuilder.class.getMethod(option.getMethodName(), Expression.class, Expression.class);
         MethodHandle methodHandle = lookup.unreflect(method);
 
-        if (option.getOperation().equals("~"))
+        if (option.equals(CriteriaOptions.LIKE))
             return (Predicate) methodHandle.invoke(
                     criteriaBuilder,
                     root.get(condition.getField()),

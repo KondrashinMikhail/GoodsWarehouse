@@ -27,37 +27,28 @@ public class ProductRepositoryTest {
 
     private final List<CreateProductDTO> products = new ArrayList<>() {{
         add(CreateProductDTO.builder()
-//                .id(UUID.fromString("36efa2dc-6620-4969-99d5-1dfafd4cc00a"))
                 .article("p-1")
                 .name("product-1")
                 .description("some description for product-1")
                 .category(ProductCategory.OTHER)
                 .price(101.0)
                 .count(1)
-//                .creationDate(LocalDate.now().minusYears(1))
-//                .lastModifiedDate(LocalDateTime.now().minusMonths(1))
                 .build());
         add(CreateProductDTO.builder()
-//                .id(UUID.fromString("e21a9304-b46a-4627-a767-a13ddebc4ff8"))
                 .article("p-2")
                 .name("product-2")
                 .description("some description for product-2")
                 .category(ProductCategory.OTHER)
                 .price(100.0)
                 .count(2)
-//                .creationDate(LocalDate.now().minusYears(2))
-//                .lastModifiedDate(LocalDateTime.now().minusMonths(2))
                 .build());
         add(CreateProductDTO.builder()
-//                .id(UUID.fromString("3fa7a6e8-e627-488e-8a12-d641d512196b"))
                 .article("p-t-d")
                 .name("product-to-delete")
                 .description("some description for product-to-delete")
                 .category(ProductCategory.OTHER)
                 .price(100.0)
                 .count(3)
-//                .creationDate(LocalDate.now().minusYears(3))
-//                .lastModifiedDate(LocalDateTime.now().minusMonths(3))
                 .build());
     }};
 
