@@ -18,7 +18,7 @@ public class CurrencyCacheConfig {
 
     @CacheEvict(value = "${caching.currency.name}", allEntries = true)
     @Scheduled(fixedDelayString = "${caching.ttl}")
-    public void emptyHotelsCache() {
+    public void emptyCurrencyCache() {
         log.info("Cleared cache: {}", CACHE_CURRENCY_NAME);
     }
 
