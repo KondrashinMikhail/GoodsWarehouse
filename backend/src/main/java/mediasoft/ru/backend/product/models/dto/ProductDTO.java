@@ -1,6 +1,9 @@
 package mediasoft.ru.backend.product.models.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import mediasoft.ru.backend.product.models.entities.ProductCategory;
 
 import java.time.LocalDate;
