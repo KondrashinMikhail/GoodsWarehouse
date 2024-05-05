@@ -163,9 +163,8 @@ public class ProductServiceImpl implements ProductService {
             final List<Predicate> predicates = new ArrayList<>();
             for (Condition condition : conditions) {
                 CriteriaOptions currentOption = Stream.of(CriteriaOptions.values())
-                        .filter(option -> option.name().equalsIgnoreCase(condition.getOperation()) ||
-                                option.getOperation().equalsIgnoreCase(condition.getOperation()))
-                        .findFirst().orElseThrow(() -> new InvalidOperationException(condition.getOperation()));
+                        .filter(option -> option.equals(condition.getOperation()))
+                        .findFirst().orElseThrow(() -> new InvalidOperationException(condition.getOperation().toString()));
                 try {
                     Class<?> valueType = Product.class.getDeclaredField(condition.getField()).getType();
                     predicates.add(getPredicate(currentOption, criteriaBuilder, root, condition, valueType));

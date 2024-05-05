@@ -14,5 +14,5 @@ import lombok.Setter;
 public class Condition {
     private String field;
     private Object value;
-    private String operation;
+    private CriteriaOptions operation;
 }
