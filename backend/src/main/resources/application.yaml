@@ -22,6 +22,11 @@ spring:
   output:
     ansi:
       enabled: always
+app:
+  scheduling:
+    optimization: true
+    price_increase: 0.2
+    period: 5000
 
 ---
 
@@ -33,6 +38,9 @@ spring:
     password: postgres
     username: postgres
     url: jdbc:postgresql://localhost:5432/goodswarehouse-backend
+app:
+  scheduling:
+    enabled: false
 
 ---
 
@@ -44,7 +52,9 @@ spring:
     password: password
     username: goodswarehouse-backend
     url: jdbc:postgresql://postgres:5432/goodswarehouse-backend
-
+app:
+  scheduling:
+    enabled: true
 
 ---
 
@@ -59,3 +69,6 @@ spring:
     password:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+app:
+  scheduling:
+    enabled: false

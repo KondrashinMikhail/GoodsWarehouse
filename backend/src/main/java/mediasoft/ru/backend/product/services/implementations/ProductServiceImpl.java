@@ -6,9 +6,9 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
 import mediasoft.ru.backend.criteria.Condition;
 import mediasoft.ru.backend.criteria.CriteriaOptions;
+import lombok.extern.slf4j.Slf4j;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
 import mediasoft.ru.backend.exceptions.EmptyFieldException;
 import mediasoft.ru.backend.exceptions.InvalidFieldException;
@@ -39,7 +39,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 @Service
-@Log4j2
+@Slf4j
 @AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;

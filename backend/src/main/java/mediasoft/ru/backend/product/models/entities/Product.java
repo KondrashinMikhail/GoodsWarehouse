@@ -2,7 +2,6 @@ package mediasoft.ru.backend.product.models.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,6 +21,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,7 +36,7 @@ public class Product {
     private String description;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(jakarta.persistence.EnumType.STRING)
     private ProductCategory category;
 
     @Column(nullable = false)
