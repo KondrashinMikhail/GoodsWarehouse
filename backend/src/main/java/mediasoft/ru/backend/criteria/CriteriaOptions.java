@@ -10,16 +10,15 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 public enum CriteriaOptions {
-    EQUALS("==", "equal"),
-    NOT_EQUALS("!=", "notEqual"),
-    LESS_THAN("<", "lessThan"),
-    GREATER_THAN(">", "greaterThan"),
-    LESS_OR_EQUALS("<=", "lessThanOrEqualTo"),
-    GREATER_OR_EQUALS(">=", "greaterThanOrEqualTo"),
-    LIKE("~", "like");
+    EQUALS("=="),
+    NOT_EQUALS("!="),
+    LESS_THAN("<"),
+    GREATER_THAN(">"),
+    LESS_OR_EQUALS("<="),
+    GREATER_OR_EQUALS(">="),
+    LIKE("~");
 
     private final String operation;
-    private final String methodName;
 
     @JsonValue
     public String getOperation() {

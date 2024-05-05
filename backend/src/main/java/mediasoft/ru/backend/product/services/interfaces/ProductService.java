@@ -1,6 +1,6 @@
 package mediasoft.ru.backend.product.services.interfaces;
 
-import mediasoft.ru.backend.criteria.Condition;
+import mediasoft.ru.backend.criteria.condition.Condition;
 import mediasoft.ru.backend.product.models.dto.CreateProductDTO;
 import mediasoft.ru.backend.product.models.dto.ProductDTO;
 import mediasoft.ru.backend.product.models.dto.UpdateProductDTO;
@@ -20,5 +20,5 @@ public interface ProductService {
 
     ProductDTO deleteProduct(UUID id);
 
-    List<ProductDTO> searchProducts(Pageable pageable, List<Condition> conditions);
+    List<ProductDTO> searchProducts(Pageable pageable, List<Condition<?>> conditions);
 }

@@ -1,19 +1,13 @@
 package mediasoft.ru.backend.product.services.implementations;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import mediasoft.ru.backend.criteria.Condition;
-import mediasoft.ru.backend.criteria.CriteriaOptions;
 import lombok.extern.slf4j.Slf4j;
+import mediasoft.ru.backend.criteria.condition.Condition;
+import mediasoft.ru.backend.criteria.specification.PredicateSpecification;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
 import mediasoft.ru.backend.exceptions.EmptyFieldException;
-import mediasoft.ru.backend.exceptions.InvalidFieldException;
-import mediasoft.ru.backend.exceptions.InvalidOperationException;
-import mediasoft.ru.backend.exceptions.NullableValueException;
 import mediasoft.ru.backend.exceptions.UniqueFieldException;
 import mediasoft.ru.backend.product.models.dto.CreateProductDTO;
 import mediasoft.ru.backend.product.models.dto.ProductDTO;
@@ -26,9 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,7 +27,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -158,18 +148,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> searchProducts(Pageable pageable, List<Condition> conditions) {
+    public List<ProductDTO> searchProducts(Pageable pageable, List<Condition<?>> conditions) {
         final Specification<Product> specification = (root, query, criteriaBuilder) -> {
             final List<Predicate> predicates = new ArrayList<>();
             for (Condition condition : conditions) {
-                CriteriaOptions currentOption = Stream.of(CriteriaOptions.values())
-                        .filter(option -> option.equals(condition.getOperation()))
-                        .findFirst().orElseThrow(() -> new InvalidOperationException(condition.getOperation().toString()));
-                try {
-                    Class<?> valueType = Product.class.getDeclaredField(condition.getField()).getType();
-                    predicates.add(getPredicate(currentOption, criteriaBuilder, root, condition, valueType));
-                } catch (NoSuchFieldException e) {
-                    throw new InvalidFieldException(condition.getField());
+                PredicateSpecification predicate = condition.getPredicateSpecification();
+                Expression expression = root.get(condition.getField());
+
+                switch (condition.getOperation()) {
+                    case EQUALS -> predicates.add(predicate.getEqualsPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case NOT_EQUALS -> predicates.add(predicate.getNotEqualsPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case LIKE -> predicates.add(predicate.getLikePredicate(expression, condition.getValue(), criteriaBuilder));
+                    case GREATER_THAN -> predicates.add(predicate.getGreaterThanPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case GREATER_OR_EQUALS -> predicates.add(predicate.getGreaterThanOrEqualPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case LESS_THAN -> predicates.add(predicate.getLessThanPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case LESS_OR_EQUALS -> predicates.add(predicate.getLessThanOrEqualPredicate(expression, condition.getValue(), criteriaBuilder));
                 }
             }
 
@@ -177,38 +170,6 @@ public class ProductServiceImpl implements ProductService {
         };
 
         return productRepository.findAll(specification, pageable).map(productMapper::mapToDTO).toList();
-    }
-
-    @SneakyThrows
-    private Predicate getPredicate(CriteriaOptions option, CriteriaBuilder criteriaBuilder, Root<Product> root, Condition condition, Class<?> valueType) {
-        if (condition.getValue() == null) throw new NullableValueException();
-
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        Method method = CriteriaBuilder.class.getMethod(option.getMethodName(), Expression.class, Expression.class);
-        MethodHandle methodHandle = lookup.unreflect(method);
-
-        if (option.equals(CriteriaOptions.LIKE))
-            return (Predicate) methodHandle.invoke(
-                    criteriaBuilder,
-                    root.get(condition.getField()),
-                    criteriaBuilder.literal("%" + condition.getValue().toString() + "%"));
-
-        if (valueType == Double.class)
-            return (Predicate) methodHandle.invoke(
-                    criteriaBuilder,
-                    root.get(condition.getField()),
-                    criteriaBuilder.literal(Double.parseDouble(condition.getValue().toString())));
-        else if (valueType == String.class)
-            return (Predicate) methodHandle.invoke(
-                    criteriaBuilder,
-                    root.get(condition.getField()),
-                    criteriaBuilder.literal(condition.getValue().toString()));
-        else if (valueType == LocalDateTime.class)
-            return (Predicate) methodHandle.invoke(
-                    criteriaBuilder,
-                    root.get(condition.getField()),
-                    criteriaBuilder.literal(LocalDateTime.parse(condition.getValue().toString())));
-        return null;
     }
 
     /**
