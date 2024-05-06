@@ -9,12 +9,8 @@ spring:
     enabled: true
   application:
     name: backend
-  profiles:
-    active: local
   jpa:
     open-in-view: false
-    hibernate:
-      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
@@ -27,48 +23,3 @@ app:
     optimization: true
     price_increase: 0.2
     period: 5000
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    password: postgres
-    username: postgres
-    url: jdbc:postgresql://localhost:5432/goodswarehouse-backend
-app:
-  scheduling:
-    enabled: false
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: docker
-  datasource:
-    password: password
-    username: goodswarehouse-backend
-    url: jdbc:postgresql://postgres:5432/goodswarehouse-backend
-app:
-  scheduling:
-    enabled: true
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: test
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-app:
-  scheduling:
-    enabled: false

@@ -10,16 +10,25 @@ import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 public class ExceptionsHandler {
 
     @ExceptionHandler({Exception.class})
-    protected ResponseEntity<Object> handleUnexpectedException(Exception exception) {
-        return ResponseEntity.status(BAD_GATEWAY)
-                .body(new BaseException(exception.getMessage()).formatResponseData());
+    public ResponseEntity<ErrorDetails> handleUnexpectedException(Exception exception) {
+        return ResponseEntity
+                .status(BAD_GATEWAY)
+                .body(ErrorDetails.builder()
+                        .message(exception.getMessage())
+                        .exceptionClassFrom(exception.getStackTrace()[0].getClassName())
+                        .exception(exception.getClass().getSimpleName())
+                        .build());
     }
 
     @ExceptionHandler(BaseException.class)
-    protected ResponseEntity<Object> handleBaseException(BaseException exception) {
+    public ResponseEntity<ErrorDetails> handleBaseException(BaseException exception) {
         return ResponseEntity
                 .status(exception.getStatus())
-                .body(exception.formatResponseData());
+                .body(ErrorDetails.builder()
+                        .message(exception.getMessage())
+                        .exceptionClassFrom(exception.getStackTrace()[0].getClassName())
+                        .exception(exception.getClass().getSimpleName())
+                        .build());
     }
 }
 

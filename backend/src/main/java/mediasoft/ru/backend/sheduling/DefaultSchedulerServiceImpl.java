@@ -1,25 +1,26 @@
-package mediasoft.ru.backend.sheduler;
+package mediasoft.ru.backend.sheduling;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import mediasoft.ru.backend.product.models.entities.Product;
-import mediasoft.ru.backend.product.repositories.ProductRepository;
+import mediasoft.ru.backend.entities.Product;
+import mediasoft.ru.backend.repositories.ProductRepository;
 import mediasoft.ru.backend.annotations.TimeMeasuring;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @ConditionalOnExpression("${app.scheduling.enabled} and not ${app.scheduling.optimization}")
-public class DefaultScheduler implements SchedulerService {
+public class DefaultSchedulerServiceImpl implements SchedulerService {
     private final ProductRepository productRepository;
 
     @Value("${app.scheduling.price_increase}")
-    private Double INCREASE_PERCENT;
+    private BigDecimal INCREASE_PERCENT;
 
     @Override
     @Scheduled(fixedRateString = "${app.scheduling.period}")
@@ -32,8 +33,8 @@ public class DefaultScheduler implements SchedulerService {
     }
 
     private void increasePrice(Product product) {
-        double sourcePrice = product.getPrice();
-        double newPrice = sourcePrice + (sourcePrice * INCREASE_PERCENT);
+        BigDecimal sourcePrice = product.getPrice();
+        BigDecimal newPrice = sourcePrice.add(sourcePrice.multiply(INCREASE_PERCENT));
         product.setPrice(newPrice);
     }
 }
