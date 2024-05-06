@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    username: goods-warehouse
+    password: 200214
+    url: jdbc:postgresql://postgres:5432/goods-warehouse
+  jpa:
+    hibernate:
+      ddl-auto: validate
+app:
+  scheduling:
+    enabled: true

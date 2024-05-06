@@ -1,0 +1,23 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="001" author="Mikhail Kondrashin">
+        <createTable tableName="product">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="article" type="text"/>
+            <column name="name" type="text"/>
+            <column name="description" type="text"/>
+            <column name="category" type="text"/>
+            <column name="price" type="numeric"/>
+            <column name="count" type="numeric"/>
+            <column name="creation_date" type="date"/>
+            <column name="last_modified_date" type="datetime"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

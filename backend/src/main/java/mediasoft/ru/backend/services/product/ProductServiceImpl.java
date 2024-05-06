@@ -1,17 +1,19 @@
-package mediasoft.ru.backend.product.services.implementations;
+package mediasoft.ru.backend.services.product;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mediasoft.ru.backend.dto.ProductDTO;
+import mediasoft.ru.backend.dto.response.product.CreateProductResponseDTO;
+import mediasoft.ru.backend.dto.response.product.ProductInfoResponseDTO;
+import mediasoft.ru.backend.dto.response.product.UpdateProductResponseDTO;
+import mediasoft.ru.backend.entities.Product;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
 import mediasoft.ru.backend.exceptions.EmptyFieldException;
 import mediasoft.ru.backend.exceptions.UniqueFieldException;
-import mediasoft.ru.backend.product.models.dto.CreateProductDTO;
-import mediasoft.ru.backend.product.models.dto.ProductDTO;
-import mediasoft.ru.backend.product.models.dto.UpdateProductDTO;
-import mediasoft.ru.backend.product.models.entities.Product;
-import mediasoft.ru.backend.product.models.mappers.ProductMapper;
-import mediasoft.ru.backend.product.repositories.ProductRepository;
-import mediasoft.ru.backend.product.services.interfaces.ProductService;
+import mediasoft.ru.backend.mappers.ProductMapper;
+import mediasoft.ru.backend.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,22 +36,22 @@ public class ProductServiceImpl implements ProductService {
      * После идет превращение в модель базы данных из DTO, подстановка даты создания как текущей даты. Поле последнего изменения количества не инициализируется.
      * Далее сохраняется в базу данных и сохраненный продукт с проставленным id конвертируется в DTO и возвращается.
      *
-     * @param createProductDTO модель для создания продукта, которая содержит поля, необходимые для заполнения.
+     * @param createProductRequestDTO модель для создания продукта, которая содержит поля, необходимые для заполнения.
      * @return DTO продукта поле сохранения в базе данных, где проставлен id и дата создания.
      */
     @Override
-    public ProductDTO createProduct(CreateProductDTO createProductDTO) {
-        if (isNullOrEmpty(createProductDTO.getName()) || isNullOrEmpty(createProductDTO.getArticle()))
+    public CreateProductResponseDTO createProduct(ProductDTO createProductRequestDTO) {
+        if (isNullOrEmpty(createProductRequestDTO.getName()) || isNullOrEmpty(createProductRequestDTO.getArticle()))
             throw new EmptyFieldException();
 
-        if (productRepository.findByArticle(createProductDTO.getArticle()).isPresent())
-            throw new UniqueFieldException(createProductDTO.getArticle());
+        if (productRepository.findByArticle(createProductRequestDTO.getArticle()).isPresent())
+            throw new UniqueFieldException(createProductRequestDTO.getArticle());
 
-        Product product = productMapper.mapToModel(createProductDTO);
+        Product product = productMapper.mapToModel(createProductRequestDTO);
         product.setCreationDate(LocalDate.now());
         Product savedProduct = productRepository.save(product);
         log.info(String.format("Saved new product with id - %s", savedProduct.getId()));
-        return productMapper.mapToDTO(savedProduct);
+        return productMapper.mapCreatedModelToResponse(savedProduct);
     }
 
     /**
@@ -59,9 +61,9 @@ public class ProductServiceImpl implements ProductService {
      * @return список всех продуктов, которые хранятся в базе данных, конвертированный в список DTO.
      */
     @Override
-    public List<ProductDTO> getAllProducts() {
-        List<Product> allProducts = productRepository.findAll();
-        return allProducts.stream().map(productMapper::mapToDTO).toList();
+    public List<ProductInfoResponseDTO> getAllProducts(Pageable pageable) {
+        Page<Product> allProducts = productRepository.findAll(pageable);
+        return allProducts.stream().map(productMapper::mapModelToInfoResponse).toList();
     }
 
     /**
@@ -72,9 +74,9 @@ public class ProductServiceImpl implements ProductService {
      * @return сущность продукта из базы данных, конвертированная в DTO.
      */
     @Override
-    public ProductDTO getProductById(UUID id) {
+    public ProductInfoResponseDTO getProductById(UUID id) {
         Product product = getEntityById(id);
-        return productMapper.mapToDTO(product);
+        return productMapper.mapModelToInfoResponse(product);
     }
 
     /**
@@ -83,61 +85,59 @@ public class ProductServiceImpl implements ProductService {
      * После идет проверка на существование полей в переданной сущности: если в переданной DTO нет каких-то полей, то вставляются значения этих полей, которые были до этого.
      * После измененная сущность сохраняется в базе данных и потом конвертируется в DTO.
      *
-     * @param updateProductDTO DTO, содержащая необходимые поля для обновления существующей сущности.
+     * @param updateProductRequestDTO DTO, содержащая необходимые поля для обновления существующей сущности.
      * @return обновленная сущность из базы данных, конвертированная в DTO.
      */
     @Override
-    public ProductDTO updateProduct(UpdateProductDTO updateProductDTO) {
-        Product sourceProduct = getEntityById(updateProductDTO.getId());
+    public UpdateProductResponseDTO updateProduct(ProductDTO updateProductRequestDTO) {
+        Product sourceProduct = getEntityById(updateProductRequestDTO.getId());
 
-        Optional<Product> sameArticleProduct = productRepository.findByArticle(updateProductDTO.getArticle());
+        Optional<Product> sameArticleProduct = productRepository.findByArticle(updateProductRequestDTO.getArticle());
         sameArticleProduct.ifPresent(p -> {
             if (!Objects.equals(p.getArticle(), sourceProduct.getArticle()))
                 throw new UniqueFieldException(p.getArticle());
         });
 
-        sourceProduct.setArticle(isNullOrEmpty(updateProductDTO.getArticle())
+        sourceProduct.setArticle(isNullOrEmpty(updateProductRequestDTO.getArticle())
                 ? sourceProduct.getArticle()
-                : updateProductDTO.getArticle());
+                : updateProductRequestDTO.getArticle());
 
-        sourceProduct.setName(isNullOrEmpty(updateProductDTO.getName())
+        sourceProduct.setName(isNullOrEmpty(updateProductRequestDTO.getName())
                 ? sourceProduct.getName()
-                : updateProductDTO.getName());
+                : updateProductRequestDTO.getName());
 
-        sourceProduct.setDescription(updateProductDTO.getDescription() != null
-                ? updateProductDTO.getDescription()
+        sourceProduct.setDescription(updateProductRequestDTO.getDescription() != null
+                ? updateProductRequestDTO.getDescription()
                 : sourceProduct.getDescription());
 
-        sourceProduct.setCategory(updateProductDTO.getCategory() != null
-                ? updateProductDTO.getCategory()
+        sourceProduct.setCategory(updateProductRequestDTO.getCategory() != null
+                ? updateProductRequestDTO.getCategory()
                 : sourceProduct.getCategory());
 
-        sourceProduct.setPrice(updateProductDTO.getPrice() != null
-                ? updateProductDTO.getPrice()
+        sourceProduct.setPrice(updateProductRequestDTO.getPrice() != null
+                ? updateProductRequestDTO.getPrice()
                 : sourceProduct.getPrice());
 
-        if (updateProductDTO.getCount() != null)
-            if (!Objects.equals(sourceProduct.getCount(), updateProductDTO.getCount())) {
-                sourceProduct.setCount(updateProductDTO.getCount());
+        if (updateProductRequestDTO.getCount() != null)
+            if (!Objects.equals(sourceProduct.getCount(), updateProductRequestDTO.getCount())) {
+                sourceProduct.setCount(updateProductRequestDTO.getCount());
                 sourceProduct.setLastModifiedDate(LocalDateTime.now());
             }
 
         Product updatedProduct = productRepository.save(sourceProduct);
-        return productMapper.mapToDTO(updatedProduct);
+        return productMapper.mapToUpdateResponse(updatedProduct);
     }
 
     /**
      * Метод нужен для удаления продукта из базы данных по переданному id.
      *
      * @param id id продукта, который необходимо удалить.
-     * @return удаленная из базы данных сущность.
      */
     @Override
-    public ProductDTO deleteProduct(UUID id) {
+    public void deleteProduct(UUID id) {
         Product product = getEntityById(id);
         productRepository.delete(product);
         log.info(String.format("Deleted product with id - %s", id));
-        return productMapper.mapToDTO(product);
     }
 
     /**

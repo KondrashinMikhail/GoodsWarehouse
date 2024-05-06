@@ -1,23 +1,26 @@
-package mediasoft.ru.backend.product.models.dto;
+package mediasoft.ru.backend.dto.request.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import mediasoft.ru.backend.product.models.entities.ProductCategory;
+import lombok.Setter;
+import mediasoft.ru.backend.enums.ProductCategory;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateProductDTO {
+public class UpdateProductRequestDTO {
     private UUID id;
     private String article;
     private String name;
     private String description;
     private ProductCategory category;
-    private Double price;
-    private Integer count;
+    private BigDecimal price;
+    private BigDecimal count;
 }
