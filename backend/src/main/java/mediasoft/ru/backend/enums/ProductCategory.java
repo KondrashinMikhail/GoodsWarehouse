@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.product.models.entities;
+package mediasoft.ru.backend.enums;
 
 public enum ProductCategory {
     HOUSEHOLD,

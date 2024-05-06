@@ -1,27 +1,30 @@
-package mediasoft.ru.backend.product.models.dto;
+package mediasoft.ru.backend.dto.response.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import mediasoft.ru.backend.product.models.entities.ProductCategory;
+import lombok.Setter;
+import mediasoft.ru.backend.enums.ProductCategory;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDTO {
+public class ProductInfoResponseDTO {
     private UUID id;
     private String article;
     private String name;
     private String description;
     private ProductCategory category;
-    private Double price;
-    private Integer count;
+    private BigDecimal price;
+    private BigDecimal count;
     private LocalDate creationDate;
     private LocalDateTime lastModifiedDate;
 }
