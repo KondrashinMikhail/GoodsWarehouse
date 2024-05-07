@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.entities;
+package mediasoft.ru.backend.models.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

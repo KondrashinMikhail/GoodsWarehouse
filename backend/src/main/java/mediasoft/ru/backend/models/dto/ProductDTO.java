@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.dto.response.product;
+package mediasoft.ru.backend.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductInfoResponseDTO {
+public class ProductDTO {
     private UUID id;
     private String article;
     private String name;
