@@ -1,44 +1,43 @@
 package mediasoft.ru.backend.services.currency;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
+import mediasoft.ru.backend.configurations.WebClientConfiguration;
+import mediasoft.ru.backend.models.dto.ExchangeRateDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+
+import static mediasoft.ru.backend.configurations.CurrencyCacheConfig.CACHE_CURRENCY_NAME;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class CurrencyServiceClientImpl implements CurrencyServiceClient {
-    private final CurrencyServiceMock currencyServiceMock;
+@RequiredArgsConstructor
+public class CurrencyServiceClientImpl implements CurrencyService {
+    private final WebClient webClient;
+    private final WebClientConfiguration webClientConfiguration;
 
-    @Value("${currency-service.host}")
-    private String HOST;
     @Value("${currency-service.methods.get-currency}")
     private String METHOD;
-    @Value("${web-client.retry-count}")
-    private Integer RETRY_COUNT;
 
     @Override
-    @Cacheable(value = "${caching.currency.name}", keyGenerator = "cacheKeyGenerator")
-    public JSONObject getCurrencyExchangeRate() {
+    @SneakyThrows
+    @Cacheable(value = CACHE_CURRENCY_NAME)
+    public ExchangeRateDTO getCurrencyExchangeRate() {
         try {
-            Mono<JSONObject> response = WebClient
-                    .create(HOST)
+            ExchangeRateDTO response = webClient
                     .get()
                     .uri(METHOD)
                     .retrieve()
-                    .bodyToMono(JSONObject.class)
-                    .retry(RETRY_COUNT);
-            JSONObject object = new ObjectMapper().convertValue(response.block(), JSONObject.class);
-            log.info("Got currency exchange rate from another service");
-            return object;
+                    .bodyToMono(ExchangeRateDTO.class)
+                    .retry(webClientConfiguration.getRetryCount())
+                    .block();
+            log.info("Got currency exchange rate from another service and saved in cache");
+            return response;
         } catch (Exception exception) {
-            return currencyServiceMock.getCurrencyExchangeRate();
+            return null;
         }
     }
 }

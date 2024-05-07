@@ -23,5 +23,7 @@ public interface ProductMapper {
 
     ProductInfoResponseDTO mapModelToInfoResponse(Product product);
 
+    ProductInfoResponseDTO mapModelToInfoResponse(ProductDTO productDTO);
+
     UpdateProductResponseDTO mapToUpdateResponse(Product product);
 }

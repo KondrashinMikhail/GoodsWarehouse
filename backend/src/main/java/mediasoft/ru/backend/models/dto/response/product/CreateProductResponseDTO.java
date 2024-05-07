@@ -19,5 +19,4 @@ import java.util.UUID;
 public class CreateProductResponseDTO {
     private UUID id;
     private LocalDate creationDate;
-    private CurrencyEnum currency;
 }

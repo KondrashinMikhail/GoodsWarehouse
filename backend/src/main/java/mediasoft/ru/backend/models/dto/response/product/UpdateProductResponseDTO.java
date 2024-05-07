@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mediasoft.ru.backend.enums.CurrencyEnum;
 import mediasoft.ru.backend.enums.ProductCategory;
 
 import java.math.BigDecimal;
@@ -26,6 +25,5 @@ public class UpdateProductResponseDTO {
     private BigDecimal price;
     private BigDecimal count;
     private LocalDateTime lastModifiedDate;
-    private CurrencyEnum currency;
 }
 

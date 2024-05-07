@@ -6,10 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CurrencyEnum {
-    RUB(""),
-    CNY("CNY"),
-    USD("USD"),
-    EUR("EUR");
-
-    private String exchangeRateField;
+    RUB,
+    CNY,
+    USD,
+    EUR
 }

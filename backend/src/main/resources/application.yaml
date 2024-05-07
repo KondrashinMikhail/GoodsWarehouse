@@ -19,22 +19,18 @@ spring:
     ansi:
       enabled: always
 app:
+  headers:
+    currency: "currency"
   scheduling:
     optimization: true
     price_increase: 0.2
     period: 5000
-headers:
-  keys:
-    currency: "currency"
-caching:
-  ttl: 60000
-  currency:
-    name: currencyCache
-    key: currencyExchange
-  service-connection-enabled: true
+  caching:
+    ttl: 60000
 currency-service:
   host: http://localhost:8081
+  retry-count: 2
   methods:
     get-currency: /api/currencies/get
-web-client:
-  retry-count: 2
+  mock:
+    enabled: true
