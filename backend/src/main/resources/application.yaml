@@ -9,19 +9,20 @@ spring:
     enabled: true
   application:
     name: backend
-  profiles:
-    active: local
   jpa:
     open-in-view: false
-    hibernate:
-      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
-    show-sql: true
+    show-sql: false
   output:
     ansi:
       enabled: always
+app:
+  scheduling:
+    optimization: true
+    price_increase: 0.2
+    period: 5000
 headers:
   keys:
     currency: "currency"
@@ -37,25 +38,3 @@ currency-service:
     get-currency: /api/currencies/get
 web-client:
   retry-count: 2
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    password: postgres
-    username: postgres
-    url: jdbc:postgresql://localhost:5432/goodswarehouse-backend
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: docker
-  datasource:
-    password: password
-    username: goodswarehouse-backend
-    url: jdbc:postgresql://postgres:5432/goodswarehouse-backend
