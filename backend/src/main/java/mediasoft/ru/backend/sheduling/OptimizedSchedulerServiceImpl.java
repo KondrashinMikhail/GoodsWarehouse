@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mediasoft.ru.backend.annotations.TimeMeasuring;
-import mediasoft.ru.backend.entities.Product;
+import mediasoft.ru.backend.models.entities.Product;
 import mediasoft.ru.backend.repositories.ProductRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;

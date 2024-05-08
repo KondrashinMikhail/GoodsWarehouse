@@ -2,7 +2,7 @@ package mediasoft.ru.backend.sheduling;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import mediasoft.ru.backend.entities.Product;
+import mediasoft.ru.backend.models.entities.Product;
 import mediasoft.ru.backend.repositories.ProductRepository;
 import mediasoft.ru.backend.annotations.TimeMeasuring;
 import org.springframework.beans.factory.annotation.Value;
