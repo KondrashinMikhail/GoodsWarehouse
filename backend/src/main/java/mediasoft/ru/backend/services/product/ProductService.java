@@ -31,4 +31,6 @@ public interface ProductService {
     void decrementProductCount(UUID productId, BigDecimal count);
 
     List<ProductInOrderResponseDTO> getProductsInOrder(UUID orderId);
+
+    void returnProduct(UUID productId, BigDecimal count);
 }

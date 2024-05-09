@@ -46,7 +46,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public CreateOrderResponseDTO createOrder(Long customerId, CreateOrderRequestDTO createOrderRequestDTO) {
         String deliveryAddress = createOrderRequestDTO.getDeliveryAddress();
-        if (deliveryAddress == null || deliveryAddress.isEmpty() || deliveryAddress.isBlank()) throw new EmptyFieldException();
+        if (deliveryAddress == null || deliveryAddress.isEmpty() || deliveryAddress.isBlank())
+            throw new EmptyFieldException();
 
         Customer customer = customerService.getEntityById(customerId);
         List<ProductInOrderRequestDTO> products = createOrderRequestDTO.getProducts();
@@ -111,6 +112,11 @@ public class OrderServiceImpl implements OrderService {
         checkOrderStatusAccess(order, OrderStatus.CREATED);
         checkCustomerToOrderAccess(customerId, order);
         order.setStatus(OrderStatus.CANCELLED);
+        orderProductRepository.findAllByOrderId(orderId)
+                .forEach(orderProduct -> {
+                    Product product = orderProduct.getProduct();
+                    productService.returnProduct(product.getId(), product.getCount());
+                });
         orderRepository.save(order);
     }
 

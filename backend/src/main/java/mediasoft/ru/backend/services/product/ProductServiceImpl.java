@@ -185,6 +185,14 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
+    @Override
+    public void returnProduct(UUID productId, BigDecimal count) {
+        Product product = getEntityById(productId);
+        product.setCount(product.getCount().add(count));
+        productRepository.save(product);
+        log.info("Returned {} products with id - {}", count, productId);
+    }
+
     /**
      * Метод валидирует входную строку на пустоту и незаполненность.
      *
