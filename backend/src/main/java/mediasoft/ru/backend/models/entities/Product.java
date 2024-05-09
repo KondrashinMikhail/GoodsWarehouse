@@ -40,8 +40,8 @@ public class Product {
 
     private String description;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ProductCategory category;
 
     @Column(nullable = false)
@@ -51,8 +51,13 @@ public class Product {
     private BigDecimal count;
 
     @CreationTimestamp
+    @Builder.Default
     @Column(updatable = false, nullable = false)
-    private LocalDate creationDate;
+    private LocalDate creationDate = LocalDate.now();
 
     private LocalDateTime lastModifiedDate;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isAvailable = true;
 }

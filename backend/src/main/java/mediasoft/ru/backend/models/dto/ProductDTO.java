@@ -27,4 +27,5 @@ public class ProductDTO {
     private BigDecimal count;
     private LocalDate creationDate;
     private LocalDateTime lastModifiedDate;
+    private Boolean isAvailable;
 }
