@@ -1,5 +1,6 @@
 package mediasoft.ru.backend.services.product;
 
+import mediasoft.ru.backend.criteria.condition.Condition;
 import mediasoft.ru.backend.dto.ProductDTO;
 import mediasoft.ru.backend.dto.response.product.CreateProductResponseDTO;
 import mediasoft.ru.backend.dto.response.product.ProductInfoResponseDTO;
@@ -19,4 +20,6 @@ public interface ProductService {
     UpdateProductResponseDTO updateProduct(ProductDTO updateProductRequestDTO);
 
     void deleteProduct(UUID id);
+
+    List<ProductInfoResponseDTO> searchProducts(Pageable pageable, List<Condition<?>> conditions);
 }

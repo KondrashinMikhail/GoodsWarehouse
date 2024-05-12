@@ -1,6 +1,7 @@
 package mediasoft.ru.backend.controllers;
 
 import lombok.AllArgsConstructor;
+import mediasoft.ru.backend.criteria.condition.Condition;
 import mediasoft.ru.backend.dto.request.product.CreateProductRequestDTO;
 import mediasoft.ru.backend.dto.request.product.UpdateProductRequestDTO;
 import mediasoft.ru.backend.dto.response.product.CreateProductResponseDTO;
@@ -53,5 +54,12 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<ProductInfoResponseDTO>> searchProducts(
+            Pageable pageable,
+            @RequestBody List<Condition<?>> conditions) {
+        return ResponseEntity.ok(productService.searchProducts(pageable, conditions));
     }
 }
