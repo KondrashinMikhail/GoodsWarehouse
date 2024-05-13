@@ -1,7 +1,11 @@
 package mediasoft.ru.backend.services.product;
 
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mediasoft.ru.backend.criteria.condition.Condition;
+import mediasoft.ru.backend.criteria.specification.PredicateSpecification;
 import mediasoft.ru.backend.enums.CurrencyEnum;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
 import mediasoft.ru.backend.exceptions.EmptyFieldException;
@@ -17,6 +21,7 @@ import mediasoft.ru.backend.providers.ExchangeRateProvider;
 import mediasoft.ru.backend.repositories.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,6 +29,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -160,6 +166,38 @@ public class ProductServiceImpl implements ProductService {
         Product product = getEntityById(id);
         productRepository.delete(product);
         log.info(String.format("Deleted product with id - %s", id));
+    }
+
+    @Override
+    public List<ProductInfoResponseDTO> searchProducts(Pageable pageable, List<Condition<?>> conditions) {
+        final Specification<Product> specification = (root, query, criteriaBuilder) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+            for (Condition condition : conditions) {
+                PredicateSpecification predicate = condition.getPredicateSpecification();
+                Expression expression = root.get(condition.getField());
+
+                switch (condition.getOperation()) {
+                    case EQUALS ->
+                            predicates.add(predicate.getEqualsPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case NOT_EQUALS ->
+                            predicates.add(predicate.getNotEqualsPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case LIKE ->
+                            predicates.add(predicate.getLikePredicate(expression, condition.getValue(), criteriaBuilder));
+                    case GREATER_THAN ->
+                            predicates.add(predicate.getGreaterThanPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case GREATER_OR_EQUALS ->
+                            predicates.add(predicate.getGreaterThanOrEqualPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case LESS_THAN ->
+                            predicates.add(predicate.getLessThanPredicate(expression, condition.getValue(), criteriaBuilder));
+                    case LESS_OR_EQUALS ->
+                            predicates.add(predicate.getLessThanOrEqualPredicate(expression, condition.getValue(), criteriaBuilder));
+                }
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return productRepository.findAll(specification, pageable).map(productMapper::mapModelToInfoResponse).toList();
     }
 
     /**

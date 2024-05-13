@@ -1,15 +1,16 @@
 package mediasoft.ru.backend.product.services.implementations;
 
+import mediasoft.ru.backend.enums.ProductCategory;
+import mediasoft.ru.backend.exceptions.ContentNotFoundException;
+import mediasoft.ru.backend.exceptions.EmptyFieldException;
+import mediasoft.ru.backend.exceptions.UniqueFieldException;
+import mediasoft.ru.backend.models.dto.ProductDTO;
 import mediasoft.ru.backend.models.dto.request.product.CreateProductRequestDTO;
 import mediasoft.ru.backend.models.dto.request.product.UpdateProductRequestDTO;
 import mediasoft.ru.backend.models.dto.response.product.CreateProductResponseDTO;
 import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
 import mediasoft.ru.backend.models.dto.response.product.UpdateProductResponseDTO;
 import mediasoft.ru.backend.models.entities.Product;
-import mediasoft.ru.backend.enums.ProductCategory;
-import mediasoft.ru.backend.exceptions.ContentNotFoundException;
-import mediasoft.ru.backend.exceptions.EmptyFieldException;
-import mediasoft.ru.backend.exceptions.UniqueFieldException;
 import mediasoft.ru.backend.models.mappers.ProductMapper;
 import mediasoft.ru.backend.repositories.ProductRepository;
 import mediasoft.ru.backend.services.product.ProductServiceImpl;
@@ -124,8 +125,8 @@ class ProductServiceImplTest {
 
     @Test
     void createProduct_WillDefineIdAndDateCreated() {
-        CreateProductRequestDTO createProductRequestDTO = generateCreateProductDTO("p-t", "product-test");
-        CreateProductResponseDTO product = productService.createProduct(productMapper.mapToDTO(createProductRequestDTO));
+        ProductDTO createProductDTO = productMapper.mapToDTO(generateCreateProductDTO("p-t", "product-test"));
+        CreateProductResponseDTO product = productService.createProduct(createProductDTO);
 
         Assertions.assertNotNull(product.getId());
         Assertions.assertEquals(product.getCreationDate(), LocalDate.now());
@@ -133,27 +134,27 @@ class ProductServiceImplTest {
 
     @Test
     void createProduct_WithNotUniqueArticle_WillFailWithException() {
-        CreateProductRequestDTO createProductRequestDTO = generateCreateProductDTO(getRandomProduct().getArticle(), "product-test");
+        CreateProductRequestDTO createProductDTO = generateCreateProductDTO(getRandomProduct().getArticle(), "product-test");
 
-        Assertions.assertThrows(UniqueFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductRequestDTO)));
+        Assertions.assertThrows(UniqueFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductDTO)));
     }
 
     @Test
     void createProduct_WithBlankOrNullNameOrArticle_WillFailWithException() {
-        CreateProductRequestDTO createProductRequestDTOWithBlankName = generateCreateProductDTO("p-t", "");
-        CreateProductRequestDTO createProductRequestDTOWithBlankArticle = generateCreateProductDTO("", "product-test");
+        CreateProductRequestDTO createProductDTOWithBlankName = generateCreateProductDTO("p-t", "");
+        CreateProductRequestDTO createProductDTOWithBlankArticle = generateCreateProductDTO("", "product-test");
 
-        Assertions.assertThrows(EmptyFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductRequestDTOWithBlankName)));
-        Assertions.assertThrows(EmptyFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductRequestDTOWithBlankArticle)));
+        Assertions.assertThrows(EmptyFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductDTOWithBlankName)));
+        Assertions.assertThrows(EmptyFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductDTOWithBlankArticle)));
     }
 
     @Test
     void createProduct_WithNullNameOrArticle_WillFailWithException() {
-        CreateProductRequestDTO createProductRequestDTOWithNullName = generateCreateProductDTO("p-t", null);
-        CreateProductRequestDTO createProductRequestDTOWithNullArticle = generateCreateProductDTO(null, "");
+        CreateProductRequestDTO createProductDTOWithNullName = generateCreateProductDTO("p-t", null);
+        CreateProductRequestDTO createProductDTOWithNullArticle = generateCreateProductDTO(null, "");
 
-        Assertions.assertThrows(EmptyFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductRequestDTOWithNullName)));
-        Assertions.assertThrows(EmptyFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductRequestDTOWithNullArticle)));
+        Assertions.assertThrows(EmptyFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductDTOWithNullName)));
+        Assertions.assertThrows(EmptyFieldException.class, () -> productService.createProduct(productMapper.mapToDTO(createProductDTOWithNullArticle)));
     }
 
     //--------------------| Tests on get product |--------------------
@@ -178,11 +179,11 @@ class ProductServiceImplTest {
     void updateProduct_WithOneFieldFilled_WillUpdateOneField() {
         String testDescription = String.format(("This description is specified to update product from %s"), LocalDateTime.now());
         Product sourceProduct = getRandomProduct();
-        UpdateProductRequestDTO updateProductRequestDTO = UpdateProductRequestDTO.builder()
+        UpdateProductRequestDTO updateProductDTO = UpdateProductRequestDTO.builder()
                 .id(sourceProduct.getId())
                 .description(testDescription)
                 .build();
-        UpdateProductResponseDTO resultProduct = productService.updateProduct(productMapper.mapToDTO(updateProductRequestDTO));
+        UpdateProductResponseDTO resultProduct = productService.updateProduct(productMapper.mapToDTO(updateProductDTO));
 
         Assertions.assertNotNull(resultProduct.getId());
         Assertions.assertEquals(testDescription, resultProduct.getDescription());
@@ -192,13 +193,13 @@ class ProductServiceImplTest {
     void updateProduct_WithEmptyNameOrArticle_WillNotUpdateNameOrArticle() {
         String testDescription = String.format(("This description is specified to update product from %s"), LocalDateTime.now());
         Product sourceProduct = getRandomProduct();
-        UpdateProductRequestDTO updateProductRequestDTO = UpdateProductRequestDTO.builder()
+        ProductDTO updateProductDTO = ProductDTO.builder()
                 .id(sourceProduct.getId())
                 .description(testDescription)
                 .article("")
                 .name("")
                 .build();
-        UpdateProductResponseDTO resultProduct = productService.updateProduct(productMapper.mapToDTO(updateProductRequestDTO));
+        UpdateProductResponseDTO resultProduct = productService.updateProduct(updateProductDTO);
 
         Assertions.assertEquals(sourceProduct.getArticle(), resultProduct.getArticle());
         Assertions.assertEquals(sourceProduct.getName(), resultProduct.getName());
@@ -207,11 +208,11 @@ class ProductServiceImplTest {
     @Test
     void updateProduct_WithNewCount_WillChangeLastModifiedDate() {
         Product sourceProduct = getRandomProduct();
-        UpdateProductRequestDTO updateProductRequestDTO = UpdateProductRequestDTO.builder()
+        ProductDTO updateProductDTO = ProductDTO.builder()
                 .id(sourceProduct.getId())
                 .count(sourceProduct.getCount().add(BigDecimal.valueOf(1)))
                 .build();
-        UpdateProductResponseDTO resultProduct = productService.updateProduct(productMapper.mapToDTO(updateProductRequestDTO));
+        UpdateProductResponseDTO resultProduct = productService.updateProduct(updateProductDTO);
 
         Assertions.assertEquals(
                 resultProduct.getLastModifiedDate().truncatedTo(ChronoUnit.MINUTES),
@@ -226,31 +227,31 @@ class ProductServiceImplTest {
                 .findFirst()
                 .map(Product::getArticle)
                 .orElse(null);
-        UpdateProductRequestDTO updateProductRequestDTO = UpdateProductRequestDTO.builder()
+        UpdateProductRequestDTO updateProductDTO = UpdateProductRequestDTO.builder()
                 .id(sourceProduct.getId())
                 .article(testArticle)
                 .build();
 
-        Assertions.assertThrows(UniqueFieldException.class, () -> productService.updateProduct(productMapper.mapToDTO(updateProductRequestDTO)));
+        Assertions.assertThrows(UniqueFieldException.class, () -> productService.updateProduct(productMapper.mapToDTO(updateProductDTO)));
     }
 
     @Test
     void updateProduct_WithNotFilledId_WillFailWithException() {
-        UpdateProductRequestDTO updateProductRequestDTO = UpdateProductRequestDTO.builder()
+        ProductDTO updateProductDTO = ProductDTO.builder()
                 .description(String.format(("This description is specified to update product from %s"), LocalDateTime.now()))
                 .build();
 
-        Assertions.assertThrows(ContentNotFoundException.class, () -> productService.updateProduct(productMapper.mapToDTO(updateProductRequestDTO)));
+        Assertions.assertThrows(ContentNotFoundException.class, () -> productService.updateProduct(updateProductDTO));
     }
 
     @Test
     void updateProduct_WithNotExistingId_WillFailWithException() {
-        UpdateProductRequestDTO updateProductRequestDTO = UpdateProductRequestDTO.builder()
+        ProductDTO updateProductDTO = ProductDTO.builder()
                 .id(UUID.randomUUID())
                 .description(String.format(("This description is specified to update product from %s"), LocalDateTime.now()))
                 .build();
 
-        Assertions.assertThrows(ContentNotFoundException.class, () -> productService.updateProduct(productMapper.mapToDTO(updateProductRequestDTO)));
+        Assertions.assertThrows(ContentNotFoundException.class, () -> productService.updateProduct(updateProductDTO));
     }
 
     //--------------------| Tests on delete product |--------------------
