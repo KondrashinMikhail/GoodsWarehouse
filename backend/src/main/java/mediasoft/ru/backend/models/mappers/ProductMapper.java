@@ -15,8 +15,6 @@ import org.mapstruct.Mapper;
 public interface ProductMapper {
     Product mapToModel(ProductDTO productDTO);
 
-    ProductDTO mapToDTO(Product product);
-
     ProductDTO mapToDTO(CreateProductRequestDTO createProductRequestDTO);
 
     ProductDTO mapToDTO(UpdateProductRequestDTO updateProductRequestDTO);

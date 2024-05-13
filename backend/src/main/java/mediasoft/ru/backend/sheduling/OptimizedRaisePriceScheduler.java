@@ -22,7 +22,7 @@ import java.util.ArrayList;
 @Component
 @RequiredArgsConstructor
 @ConditionalOnExpression("${app.scheduling.enabled} and ${app.scheduling.optimization}")
-public class OptimizedSchedulerServiceImpl implements SchedulerService {
+public class OptimizedRaisePriceScheduler {
     private final ProductRepository productRepository;
 
     @Autowired
@@ -31,7 +31,6 @@ public class OptimizedSchedulerServiceImpl implements SchedulerService {
     @Value("${app.scheduling.price_increase}")
     private BigDecimal INCREASE_PERCENT;
 
-    @Override
     @Scheduled(fixedRateString = "${app.scheduling.period}")
     @Transactional
     @TimeMeasuring

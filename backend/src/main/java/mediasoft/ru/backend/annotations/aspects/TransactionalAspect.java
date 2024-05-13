@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.aspects;
+package mediasoft.ru.backend.annotations.aspects;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;

@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${APP_PORT:8080}
   error:
     include-message: always
     include-binding-errors: always
@@ -8,18 +8,29 @@ spring:
   liquibase:
     enabled: true
   application:
-    name: backend
+    name: ${APP_NAME:backend}
   jpa:
     open-in-view: false
     properties:
       hibernate:
         format_sql: true
-    show-sql: false
+    show-sql: true
   output:
     ansi:
       enabled: always
 app:
+  headers:
+    currency: "currency"
   scheduling:
     optimization: true
     price_increase: 0.2
     period: 5000
+  caching:
+    ttl: 60000
+currency-service:
+  host: ${CURRENCY_SERVICE_HOST:http://localhost:8081}
+  retry-count: 2
+  methods:
+    get-currency: /api/currencies/get
+  mock:
+    enabled: true

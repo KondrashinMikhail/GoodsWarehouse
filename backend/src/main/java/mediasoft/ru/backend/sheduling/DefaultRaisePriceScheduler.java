@@ -16,13 +16,12 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @ConditionalOnExpression("${app.scheduling.enabled} and not ${app.scheduling.optimization}")
-public class DefaultSchedulerServiceImpl implements SchedulerService {
+public class DefaultRaisePriceScheduler {
     private final ProductRepository productRepository;
 
     @Value("${app.scheduling.price_increase}")
     private BigDecimal INCREASE_PERCENT;
 
-    @Override
     @Scheduled(fixedRateString = "${app.scheduling.period}")
     @Transactional
     @TimeMeasuring

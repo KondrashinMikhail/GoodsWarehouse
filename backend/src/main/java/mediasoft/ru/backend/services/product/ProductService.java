@@ -1,5 +1,6 @@
 package mediasoft.ru.backend.services.product;
 
+import mediasoft.ru.backend.criteria.condition.Condition;
 import mediasoft.ru.backend.models.dto.ProductDTO;
 import mediasoft.ru.backend.models.dto.request.product.ProductInOrderRequestDTO;
 import mediasoft.ru.backend.models.dto.response.product.CreateProductResponseDTO;
@@ -33,4 +34,6 @@ public interface ProductService {
     List<ProductInOrderResponseDTO> getProductsInOrder(UUID orderId);
 
     void returnProduct(UUID productId, BigDecimal count);
+
+    List<ProductInfoResponseDTO> searchProducts(Pageable pageable, List<Condition<?>> conditions);
 }
