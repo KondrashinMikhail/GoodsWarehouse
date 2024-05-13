@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +33,11 @@ public class Customer {
     @Column(nullable = false)
     private String mail;
 
-    @Builder.Default
     @Column(nullable = false)
-    private Boolean isActive = true;
+    private Boolean isActive;
+
+    @PrePersist
+    private void defaultFields() {
+        if (this.isActive == null) this.isActive = true;
+    }
 }

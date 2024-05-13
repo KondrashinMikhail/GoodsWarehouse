@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,8 +16,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mediasoft.ru.backend.enums.OrderStatus;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -32,13 +37,21 @@ public class Order {
 
     @ManyToOne(targetEntity = Customer.class)
     @JoinColumn(nullable = false)
+    @Fetch(FetchMode.JOIN)
     private Customer customer;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
     @Column(nullable = false)
-    private OrderStatus status = OrderStatus.CREATED;
+    private OrderStatus status;
 
     @Column(nullable = false)
     private String deliveryAddress;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderProduct> orderProducts;
+
+    @PrePersist
+    private void defaultFields() {
+        if (this.status == null) this.status = OrderStatus.CREATED;
+    }
 }

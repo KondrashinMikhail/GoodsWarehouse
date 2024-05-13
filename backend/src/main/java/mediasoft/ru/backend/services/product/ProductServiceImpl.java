@@ -34,9 +34,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -217,9 +220,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void checkProductBeforeAddToOrder(List<ProductInOrderRequestDTO> productInOrderRequestDTO) {
+    public Map<UUID, Product> getMapOfProducts(List<UUID> productIds) {
+        return productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+    }
+
+    @Override
+    public void checkProductBeforeAddToOrder(List<ProductInOrderRequestDTO> productInOrderRequestDTO, Map<UUID, Product> products) {
         for (ProductInOrderRequestDTO productInOrder : productInOrderRequestDTO) {
-            Product product = getEntityById(productInOrder.getId());
+            Product product = products.get(productInOrder.getId());
             if (!product.getIsAvailable())
                 throw new AddProductToOrderException(
                         String.format("Can not add product %s to order because this product is not available!", product.getId()));
@@ -230,11 +239,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void decrementProductCount(UUID productId, BigDecimal count) {
-        Product product = getEntityById(productId);
+    public void decrementProductCount(Product product, BigDecimal count) {
         product.setCount(product.getCount().subtract(count));
+        product.setLastModifiedDate(LocalDateTime.now());
         productRepository.save(product);
-        log.info("Subtracted {} of product with id - {}", count, productId);
+        log.info("Subtracted {} of product with id - {}", count, product.getId());
     }
 
     @Override
@@ -245,11 +254,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void returnProduct(UUID productId, BigDecimal count) {
-        Product product = getEntityById(productId);
+    public void returnProduct(Product product, BigDecimal count) {
         product.setCount(product.getCount().add(count));
         productRepository.save(product);
-        log.info("Returned {} products with id - {}", count, productId);
+        log.info("Returned {} products with id - {}", count, product.getId());
     }
 
     /**

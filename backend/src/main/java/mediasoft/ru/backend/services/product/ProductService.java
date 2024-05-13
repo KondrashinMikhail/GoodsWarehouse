@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ProductService {
@@ -27,13 +28,15 @@ public interface ProductService {
 
     Product getEntityById(UUID id);
 
-    void checkProductBeforeAddToOrder(List<ProductInOrderRequestDTO> productInOrderRequestDTO);
+    Map<UUID, Product> getMapOfProducts(List<UUID> productIds);
 
-    void decrementProductCount(UUID productId, BigDecimal count);
+    void checkProductBeforeAddToOrder(List<ProductInOrderRequestDTO> productInOrderRequestDTO, Map<UUID, Product> products);
+
+    void decrementProductCount(Product product, BigDecimal count);
 
     List<ProductInOrderResponseDTO> getProductsInOrder(UUID orderId);
 
-    void returnProduct(UUID productId, BigDecimal count);
+    void returnProduct(Product product, BigDecimal count);
 
     List<ProductInfoResponseDTO> searchProducts(Pageable pageable, List<Condition<?>> conditions);
 }

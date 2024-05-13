@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,13 +52,17 @@ public class Product {
     private BigDecimal count;
 
     @CreationTimestamp
-    @Builder.Default
     @Column(updatable = false, nullable = false)
-    private LocalDate creationDate = LocalDate.now();
+    private LocalDate creationDate;
 
     private LocalDateTime lastModifiedDate;
 
-    @Builder.Default
     @Column(nullable = false)
-    private Boolean isAvailable = true;
+    private Boolean isAvailable;
+
+    @PrePersist
+    private void defaultFields() {
+        if (this.creationDate == null) this.creationDate = LocalDate.now();
+        if (this.isAvailable == null) this.isAvailable = true;
+    }
 }

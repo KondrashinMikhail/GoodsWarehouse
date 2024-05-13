@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mediasoft.ru.backend.enums.OrderStatus;
 import mediasoft.ru.backend.exceptions.AccessDeniedException;
+import mediasoft.ru.backend.exceptions.BlockedCustomerException;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
-import mediasoft.ru.backend.exceptions.EmptyFieldException;
 import mediasoft.ru.backend.models.dto.request.order.CreateOrderRequestDTO;
 import mediasoft.ru.backend.models.dto.request.product.ProductInOrderRequestDTO;
 import mediasoft.ru.backend.models.dto.response.order.CreateOrderResponseDTO;
@@ -16,7 +16,6 @@ import mediasoft.ru.backend.models.dto.response.product.ProductInOrderResponseDT
 import mediasoft.ru.backend.models.entities.Customer;
 import mediasoft.ru.backend.models.entities.Order;
 import mediasoft.ru.backend.models.entities.OrderProduct;
-import mediasoft.ru.backend.models.entities.OrderProductKey;
 import mediasoft.ru.backend.models.entities.Product;
 import mediasoft.ru.backend.models.mappers.OrderMapper;
 import mediasoft.ru.backend.repositories.OrderProductRepository;
@@ -28,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,12 +46,14 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public CreateOrderResponseDTO createOrder(Long customerId, CreateOrderRequestDTO createOrderRequestDTO) {
         String deliveryAddress = createOrderRequestDTO.getDeliveryAddress();
-        if (deliveryAddress == null || deliveryAddress.isEmpty() || deliveryAddress.isBlank())
-            throw new EmptyFieldException();
-
         Customer customer = customerService.getEntityById(customerId);
+        if (!customer.getIsActive())
+            throw new BlockedCustomerException(customer.getId());
         List<ProductInOrderRequestDTO> products = createOrderRequestDTO.getProducts();
-        productService.checkProductBeforeAddToOrder(products);
+
+        Map<UUID, Product> productsMap = productService.getMapOfProducts(products.stream().map(ProductInOrderRequestDTO::getId).toList());
+        productService.checkProductBeforeAddToOrder(products, productsMap);
+
         Order order = orderRepository.save(Order.builder()
                 .customer(customer)
                 .deliveryAddress(deliveryAddress)
@@ -59,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("Created order with id - {}", order.getId());
 
         products.forEach(productInOrderDTO -> {
-            Product product = productService.getEntityById(productInOrderDTO.getId());
+            Product product = productsMap.get(productInOrderDTO.getId());
             addProductToOrder(product, productInOrderDTO.getCount(), order);
         });
 
@@ -68,24 +70,30 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void changeProductsInOrder(Long customerId, List<ProductInOrderRequestDTO> products, UUID orderId) {
+    public void changeProductsInOrder(Long customerId, List<ProductInOrderRequestDTO> productsInOrderRequest, UUID orderId) {
         Order order = getEntityById(orderId);
         checkOrderStatusAccess(order, OrderStatus.CREATED);
         checkCustomerToOrderAccess(customerId, order);
-        productService.checkProductBeforeAddToOrder(products);
-        products.forEach(product -> {
-            Product productEntity = productService.getEntityById(product.getId());
-            Optional<OrderProduct> orderProduct = orderProductRepository.findById(new OrderProductKey(orderId, product.getId()));
+        Map<UUID, Product> productsMap = productService.getMapOfProducts(productsInOrderRequest.stream().map(ProductInOrderRequestDTO::getId).toList());
+        productService.checkProductBeforeAddToOrder(productsInOrderRequest, productsMap);
+
+        productsInOrderRequest.forEach(product -> {
+            Product productEntity = productsMap.get(product.getId());
+
+            Optional<OrderProduct> orderProduct = order.getOrderProducts().stream()
+                    .filter(orderProducts -> orderProducts.getProduct().getId() == productEntity.getId())
+                    .findFirst();
+
             if (orderProduct.isEmpty())
                 addProductToOrder(productEntity, product.getCount(), order);
             else {
                 OrderProduct orderProductExtracted = orderProduct.get();
-                orderProductExtracted.setProductCount(product.getCount());
+                orderProductExtracted.setProductCount(orderProductExtracted.getProductCount().add(product.getCount()));
                 orderProductExtracted.setProductPrice(productEntity.getPrice());
                 orderProductExtracted.setLastModifiedDate(LocalDateTime.now());
                 orderProductRepository.save(orderProductExtracted);
                 log.info("Updated product with id - {} in order with id - {}", product.getId(), order.getId());
-                productService.decrementProductCount(product.getId(), product.getCount());
+                productService.decrementProductCount(productsMap.get(product.getId()), product.getCount());
             }
         });
     }
@@ -107,16 +115,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void deleteOrder(Long customerId, UUID orderId) {
         Order order = getEntityById(orderId);
         checkOrderStatusAccess(order, OrderStatus.CREATED);
         checkCustomerToOrderAccess(customerId, order);
+        order.getOrderProducts()
+                .forEach(orderProduct ->
+                        productService.returnProduct(orderProduct.getProduct(), orderProduct.getProductCount()));
         order.setStatus(OrderStatus.CANCELLED);
-        orderProductRepository.findAllByOrderId(orderId)
-                .forEach(orderProduct -> {
-                    Product product = orderProduct.getProduct();
-                    productService.returnProduct(product.getId(), product.getCount());
-                });
         orderRepository.save(order);
     }
 
@@ -137,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getEntityById(UUID id) {
-        return orderRepository.findById(id).orElseThrow(() ->
+        return orderRepository.findByIdFetchProducts(id).orElseThrow(() ->
                 new ContentNotFoundException(String.format("Order with id - %s not found!", id)));
     }
 
@@ -151,12 +158,15 @@ public class OrderServiceImpl implements OrderService {
                 .lastModifiedDate(LocalDateTime.now())
                 .build());
         log.info("Added product with id - {} to order with id - {}", product.getId(), order.getId());
-        productService.decrementProductCount(product.getId(), productCount);
+        productService.decrementProductCount(product, productCount);
     }
 
     private void checkCustomerToOrderAccess(Long customerId, Order order) {
         if (!Objects.equals(order.getCustomer().getId(), customerId))
             throw new AccessDeniedException(String.format("Customer with id - %s can not perform actions on the order %s", customerId, order.getId()));
+        Customer customer = order.getCustomer();
+        if (!customer.getIsActive())
+            throw new BlockedCustomerException(customer.getId());
     }
 
     private void checkOrderStatusAccess(Order order, OrderStatus status) {
