@@ -1,10 +1,10 @@
 package mediasoft.ru.backend.services.product;
 
 import mediasoft.ru.backend.criteria.condition.Condition;
-import mediasoft.ru.backend.dto.ProductDTO;
-import mediasoft.ru.backend.dto.response.product.CreateProductResponseDTO;
-import mediasoft.ru.backend.dto.response.product.ProductInfoResponseDTO;
-import mediasoft.ru.backend.dto.response.product.UpdateProductResponseDTO;
+import mediasoft.ru.backend.models.dto.ProductDTO;
+import mediasoft.ru.backend.models.dto.response.product.CreateProductResponseDTO;
+import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
+import mediasoft.ru.backend.models.dto.response.product.UpdateProductResponseDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

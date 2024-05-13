@@ -1,17 +1,17 @@
 package mediasoft.ru.backend.product.services.implementations;
 
-import mediasoft.ru.backend.dto.ProductDTO;
-import mediasoft.ru.backend.dto.request.product.CreateProductRequestDTO;
-import mediasoft.ru.backend.dto.request.product.UpdateProductRequestDTO;
-import mediasoft.ru.backend.dto.response.product.CreateProductResponseDTO;
-import mediasoft.ru.backend.dto.response.product.ProductInfoResponseDTO;
-import mediasoft.ru.backend.dto.response.product.UpdateProductResponseDTO;
-import mediasoft.ru.backend.entities.Product;
 import mediasoft.ru.backend.enums.ProductCategory;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
 import mediasoft.ru.backend.exceptions.EmptyFieldException;
 import mediasoft.ru.backend.exceptions.UniqueFieldException;
-import mediasoft.ru.backend.mappers.ProductMapper;
+import mediasoft.ru.backend.models.dto.ProductDTO;
+import mediasoft.ru.backend.models.dto.request.product.CreateProductRequestDTO;
+import mediasoft.ru.backend.models.dto.request.product.UpdateProductRequestDTO;
+import mediasoft.ru.backend.models.dto.response.product.CreateProductResponseDTO;
+import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
+import mediasoft.ru.backend.models.dto.response.product.UpdateProductResponseDTO;
+import mediasoft.ru.backend.models.entities.Product;
+import mediasoft.ru.backend.models.mappers.ProductMapper;
 import mediasoft.ru.backend.repositories.ProductRepository;
 import mediasoft.ru.backend.services.product.ProductServiceImpl;
 import org.junit.jupiter.api.Assertions;

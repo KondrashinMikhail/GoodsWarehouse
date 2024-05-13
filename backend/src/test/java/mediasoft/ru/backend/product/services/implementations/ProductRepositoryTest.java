@@ -1,8 +1,8 @@
 package mediasoft.ru.backend.product.services.implementations;
 
-import mediasoft.ru.backend.dto.ProductDTO;
-import mediasoft.ru.backend.dto.response.product.ProductInfoResponseDTO;
 import mediasoft.ru.backend.enums.ProductCategory;
+import mediasoft.ru.backend.models.dto.ProductDTO;
+import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
 import mediasoft.ru.backend.services.product.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ComponentScan(basePackages = {"mediasoft.ru.backend.product.services.implementations"})

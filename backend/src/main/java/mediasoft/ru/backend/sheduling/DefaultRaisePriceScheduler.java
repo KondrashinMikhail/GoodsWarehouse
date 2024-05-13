@@ -2,7 +2,7 @@ package mediasoft.ru.backend.sheduling;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import mediasoft.ru.backend.entities.Product;
+import mediasoft.ru.backend.models.entities.Product;
 import mediasoft.ru.backend.repositories.ProductRepository;
 import mediasoft.ru.backend.annotations.TimeMeasuring;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,13 +16,12 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @ConditionalOnExpression("${app.scheduling.enabled} and not ${app.scheduling.optimization}")
-public class DefaultSchedulerServiceImpl implements SchedulerService {
+public class DefaultRaisePriceScheduler {
     private final ProductRepository productRepository;
 
     @Value("${app.scheduling.price_increase}")
     private BigDecimal INCREASE_PERCENT;
 
-    @Override
     @Scheduled(fixedRateString = "${app.scheduling.period}")
     @Transactional
     @TimeMeasuring

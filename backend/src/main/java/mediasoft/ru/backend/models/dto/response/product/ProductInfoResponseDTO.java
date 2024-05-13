@@ -1,10 +1,11 @@
-package mediasoft.ru.backend.dto;
+package mediasoft.ru.backend.models.dto.response.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mediasoft.ru.backend.enums.CurrencyEnum;
 import mediasoft.ru.backend.enums.ProductCategory;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDTO {
+public class ProductInfoResponseDTO {
     private UUID id;
     private String article;
     private String name;
@@ -27,4 +28,5 @@ public class ProductDTO {
     private BigDecimal count;
     private LocalDate creationDate;
     private LocalDateTime lastModifiedDate;
+    private CurrencyEnum currency;
 }

@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mediasoft.ru.backend.annotations.TimeMeasuring;
-import mediasoft.ru.backend.entities.Product;
+import mediasoft.ru.backend.models.entities.Product;
 import mediasoft.ru.backend.repositories.ProductRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 @Component
 @RequiredArgsConstructor
 @ConditionalOnExpression("${app.scheduling.enabled} and ${app.scheduling.optimization}")
-public class OptimizedSchedulerServiceImpl implements SchedulerService {
+public class OptimizedRaisePriceScheduler {
     private final ProductRepository productRepository;
 
     @Autowired
@@ -31,7 +31,6 @@ public class OptimizedSchedulerServiceImpl implements SchedulerService {
     @Value("${app.scheduling.price_increase}")
     private BigDecimal INCREASE_PERCENT;
 
-    @Override
     @Scheduled(fixedRateString = "${app.scheduling.period}")
     @Transactional
     @TimeMeasuring

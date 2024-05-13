@@ -2,12 +2,12 @@ package mediasoft.ru.backend.controllers;
 
 import lombok.AllArgsConstructor;
 import mediasoft.ru.backend.criteria.condition.Condition;
-import mediasoft.ru.backend.dto.request.product.CreateProductRequestDTO;
-import mediasoft.ru.backend.dto.request.product.UpdateProductRequestDTO;
-import mediasoft.ru.backend.dto.response.product.CreateProductResponseDTO;
-import mediasoft.ru.backend.dto.response.product.ProductInfoResponseDTO;
-import mediasoft.ru.backend.dto.response.product.UpdateProductResponseDTO;
-import mediasoft.ru.backend.mappers.ProductMapper;
+import mediasoft.ru.backend.models.dto.request.product.CreateProductRequestDTO;
+import mediasoft.ru.backend.models.dto.request.product.UpdateProductRequestDTO;
+import mediasoft.ru.backend.models.dto.response.product.CreateProductResponseDTO;
+import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
+import mediasoft.ru.backend.models.dto.response.product.UpdateProductResponseDTO;
+import mediasoft.ru.backend.models.mappers.ProductMapper;
 import mediasoft.ru.backend.services.product.ProductService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

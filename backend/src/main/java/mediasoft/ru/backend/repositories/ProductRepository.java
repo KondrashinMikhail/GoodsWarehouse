@@ -1,7 +1,7 @@
 package mediasoft.ru.backend.repositories;
 
 import jakarta.persistence.LockModeType;
-import mediasoft.ru.backend.entities.Product;
+import mediasoft.ru.backend.models.entities.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;

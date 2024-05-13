@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.dto.response.product;
+package mediasoft.ru.backend.models.dto.response.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
