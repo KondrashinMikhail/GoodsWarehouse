@@ -1,5 +1,8 @@
 package mediasoft.ru.backend.product.services.implementations;
 
+import mediasoft.ru.backend.criteria.condition.Condition;
+import mediasoft.ru.backend.criteria.condition.StringCondition;
+import mediasoft.ru.backend.enums.CriteriaOptions;
 import mediasoft.ru.backend.enums.ProductCategory;
 import mediasoft.ru.backend.models.dto.ProductDTO;
 import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
@@ -19,8 +22,14 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ComponentScan(basePackages = {"mediasoft.ru.backend.product.services.implementations"})
-@ComponentScan(basePackages = {"mediasoft.ru.backend.product.models.mappers"})
+@ComponentScan(basePackages = {
+        "mediasoft.ru.backend.services.product",
+        "mediasoft.ru.backend.services.currency",
+        "mediasoft.ru.backend.providers",
+        "mediasoft.ru.backend.models.mappers",
+        "mediasoft.ru.backend.configurations",
+        "mediasoft.ru.backend.criteria"
+})
 @ActiveProfiles("test")
 public class ProductRepositoryTest {
     @Autowired
@@ -58,16 +67,16 @@ public class ProductRepositoryTest {
         products.forEach(product -> productService.createProduct(product));
 
         Pageable pageable = PageRequest.of(0, 10);
-//        List<Condition> conditions = List.of(
-//                new Condition("article", "p", "~"),
-//                new Condition("price", 100.0, ">")
-//        );
+        final List<Condition<?>> conditions = List.of(
+                StringCondition.builder()
+                        .field("article")
+                        .value("p")
+                        .operation(CriteriaOptions.LIKE)
+                        .build()
+        );
 
-        List<ProductInfoResponseDTO> products = productService.searchProducts(pageable, null);//conditions);
+        List<ProductInfoResponseDTO> products = productService.searchProducts(pageable, conditions);
 
-        products.forEach(product -> {
-            assertThat(product.getName()).contains("p");
-            assertThat(product.getPrice()).isGreaterThan(BigDecimal.valueOf(100.0));
-        });
+        products.forEach(product -> assertThat(product.getName()).contains("p"));
     }
 }

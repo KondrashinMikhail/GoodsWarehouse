@@ -12,6 +12,8 @@ import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
 import mediasoft.ru.backend.models.dto.response.product.UpdateProductResponseDTO;
 import mediasoft.ru.backend.models.entities.Product;
 import mediasoft.ru.backend.models.mappers.ProductMapper;
+import mediasoft.ru.backend.providers.CurrencyProvider;
+import mediasoft.ru.backend.providers.ExchangeRateProvider;
 import mediasoft.ru.backend.repositories.ProductRepository;
 import mediasoft.ru.backend.services.product.ProductServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -43,6 +45,10 @@ class ProductServiceImplTest {
     private ProductServiceImpl productService;
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    private CurrencyProvider currencyProvider;
+    @Mock
+    private ExchangeRateProvider exchangeRateProvider;
     @Spy
     private ProductMapper productMapper = Mappers.getMapper(ProductMapper.class);
 
