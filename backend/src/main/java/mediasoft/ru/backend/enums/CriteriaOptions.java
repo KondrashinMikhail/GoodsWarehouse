@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.criteria;
+package mediasoft.ru.backend.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
