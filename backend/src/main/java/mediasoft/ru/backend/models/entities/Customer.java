@@ -2,8 +2,6 @@ package mediasoft.ru.backend.models.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Pattern;
@@ -12,7 +10,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -23,8 +24,8 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
 
     @Column(unique = true, nullable = false)
     private String login;

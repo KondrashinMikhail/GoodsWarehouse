@@ -3,7 +3,7 @@ package mediasoft.ru.backend.services.currency;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import mediasoft.ru.backend.configurations.WebClientConfiguration;
+import mediasoft.ru.backend.configurations.WebClientCurrencyConfiguration;
 import mediasoft.ru.backend.models.dto.ExchangeRateDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,10 +16,11 @@ import static mediasoft.ru.backend.configurations.CurrencyCacheConfig.CACHE_CURR
 @Slf4j
 @RequiredArgsConstructor
 public class CurrencyServiceClientImpl implements CurrencyService {
-    private final WebClient webClient;
-    private final WebClientConfiguration webClientConfiguration;
+    private final WebClient webClientCurrency;
+    private final WebClient webClientAccount;
+    private final WebClientCurrencyConfiguration webClientCurrencyConfiguration;
 
-    @Value("${currency-service.methods.get-currency}")
+    @Value("${rest.currency-service.methods.get-currency}")
     private String METHOD;
 
     @Override
@@ -27,12 +28,12 @@ public class CurrencyServiceClientImpl implements CurrencyService {
     @Cacheable(value = CACHE_CURRENCY_NAME)
     public ExchangeRateDTO getCurrencyExchangeRate() {
         try {
-            ExchangeRateDTO response = webClient
+            ExchangeRateDTO response = webClientCurrency
                     .get()
                     .uri(METHOD)
                     .retrieve()
                     .bodyToMono(ExchangeRateDTO.class)
-                    .retry(webClientConfiguration.getRetryCount())
+                    .retry(webClientCurrencyConfiguration.getRetryCount())
                     .block();
             log.info("Got currency exchange rate from another service and saved in cache");
             return response;

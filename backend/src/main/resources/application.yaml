@@ -27,10 +27,19 @@ app:
     period: 5000
   caching:
     ttl: 60000
-currency-service:
-  host: ${CURRENCY_SERVICE_HOST:http://localhost:8081}
-  retry-count: 2
-  methods:
-    get-currency: /api/currencies/get
-  mock:
-    enabled: true
+rest:
+  currency-service:
+    host: ${CURRENCY_SERVICE_HOST:http://localhost:8081}
+    retry-count: 2
+    methods:
+      get-currency: /api/currencies/get
+    mock:
+      enabled: false
+  account-service:
+    host: ${ACCOUNT_SERVICE_HOST:http://localhost:8082}
+    methods:
+      get-account-number: /api/account/number
+  crm-service:
+    host: ${CRM_SERVICE_HOST:http://localhost:8082}
+    methods:
+      get-inn: /api/inn

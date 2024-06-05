@@ -10,13 +10,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "currency-service")
-public class WebClientConfiguration {
+@ConfigurationProperties(prefix = "rest.currency-service")
+public class WebClientCurrencyConfiguration {
     private String host;
     private Long retryCount;
 
     @Bean
-    protected WebClient webClient() {
+    protected WebClient webClientCurrency() {
         return WebClient.builder()
                 .baseUrl(host)
                 .build();

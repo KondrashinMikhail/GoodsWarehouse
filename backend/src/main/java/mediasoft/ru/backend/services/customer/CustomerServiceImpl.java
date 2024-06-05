@@ -7,6 +7,8 @@ import mediasoft.ru.backend.models.entities.Customer;
 import mediasoft.ru.backend.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -14,7 +16,7 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
 
     @Override
-    public Customer getEntityById(Long id) {
+    public Customer getEntityById(UUID id) {
         return customerRepository.findById(id).orElseThrow(() ->
                 new ContentNotFoundException(String.format("Customer with id - %s not found!", id)));
     }
