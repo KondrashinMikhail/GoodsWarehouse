@@ -7,11 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import mediasoft.ru.backend.criteria.condition.Condition;
 import mediasoft.ru.backend.criteria.specification.PredicateSpecification;
 import mediasoft.ru.backend.enums.CurrencyEnum;
+import mediasoft.ru.backend.exceptions.AddProductToOrderException;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
 import mediasoft.ru.backend.exceptions.EmptyFieldException;
 import mediasoft.ru.backend.exceptions.UniqueFieldException;
 import mediasoft.ru.backend.models.dto.ProductDTO;
+import mediasoft.ru.backend.models.dto.request.product.ProductInOrderRequestDTO;
 import mediasoft.ru.backend.models.dto.response.product.CreateProductResponseDTO;
+import mediasoft.ru.backend.models.dto.response.product.ProductInOrderResponseDTO;
 import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
 import mediasoft.ru.backend.models.dto.response.product.UpdateProductResponseDTO;
 import mediasoft.ru.backend.models.entities.Product;
@@ -31,9 +34,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -73,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
         product.setCreationDate(LocalDate.now());
         Product savedProduct = productRepository.save(product);
         log.info(String.format("Saved new product with id - %s", savedProduct.getId()));
-        return productMapper.mapCreatedModelToResponse(savedProduct);
+        return productMapper.mapModelToResponse(savedProduct);
     }
 
     /**
@@ -153,7 +159,7 @@ public class ProductServiceImpl implements ProductService {
             }
 
         Product updatedProduct = productRepository.save(sourceProduct);
-        return productMapper.mapToUpdateResponse(updatedProduct);
+        return productMapper.mapModelToUpdateResponse(updatedProduct);
     }
 
     /**
@@ -164,8 +170,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(UUID id) {
         Product product = getEntityById(id);
-        productRepository.delete(product);
-        log.info(String.format("Deleted product with id - %s", id));
+        product.setIsAvailable(false);
+        productRepository.save(product);
+        log.info(String.format("Made product with id - %s not available", id));
     }
 
     @Override
@@ -206,9 +213,51 @@ public class ProductServiceImpl implements ProductService {
      * @param id id продукта, который необходимо получить.
      * @return сущность продукта из базы данных.
      */
-    private Product getEntityById(UUID id) {
+    @Override
+    public Product getEntityById(UUID id) {
         return productRepository.findById(id).orElseThrow(() ->
                 new ContentNotFoundException(String.format("Product with id - %s not found!", id)));
+    }
+
+    @Override
+    public Map<UUID, Product> getMapOfProducts(List<UUID> productIds) {
+        return productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+    }
+
+    @Override
+    public void checkProductBeforeAddToOrder(List<ProductInOrderRequestDTO> productInOrderRequestDTO, Map<UUID, Product> products) {
+        for (ProductInOrderRequestDTO productInOrder : productInOrderRequestDTO) {
+            Product product = products.get(productInOrder.getId());
+            if (!product.getIsAvailable())
+                throw new AddProductToOrderException(
+                        String.format("Can not add product %s to order because this product is not available!", product.getId()));
+            if (product.getCount().compareTo(productInOrder.getCount()) < 0)
+                throw new AddProductToOrderException(
+                        String.format("Can not add product %s to order because there are not enough of them!", product.getId()));
+        }
+    }
+
+    @Override
+    public void decrementProductCount(Product product, BigDecimal count) {
+        product.setCount(product.getCount().subtract(count));
+        product.setLastModifiedDate(LocalDateTime.now());
+        productRepository.save(product);
+        log.info("Subtracted {} of product with id - {}", count, product.getId());
+    }
+
+    @Override
+    public List<ProductInOrderResponseDTO> getProductsInOrder(UUID orderId) {
+        return productRepository.getOrderProducts(orderId).stream()
+                .map(productMapper::mapProjectionToResponse)
+                .toList();
+    }
+
+    @Override
+    public void returnProduct(Product product, BigDecimal count) {
+        product.setCount(product.getCount().add(count));
+        productRepository.save(product);
+        log.info("Returned {} products with id - {}", count, product.getId());
     }
 
     /**

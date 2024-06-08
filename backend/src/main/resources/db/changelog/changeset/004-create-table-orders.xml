@@ -4,37 +4,32 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="001" author="Mikhail Kondrashin">
+    <changeSet id="004" author="Mikhail Kondrashin">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="product"/>
+                <tableExists tableName="orders"/>
             </not>
         </preConditions>
-        <createTable tableName="product">
+        <createTable tableName="orders">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="article" type="varchar">
-                <constraints unique="true"/>
-            </column>
-            <column name="name" type="varchar">
+            <column name="customer_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="varchar"/>
-            <column name="category" type="varchar">
+            <column name="status" type="varchar">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="numeric">
+            <column name="delivery_address" type="varchar">
                 <constraints nullable="false"/>
             </column>
-            <column name="count" type="numeric">
-                <constraints nullable="false"/>
-            </column>
-            <column name="creation_date" type="date">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_modified_date" type="datetime"/>
         </createTable>
+        <addForeignKeyConstraint
+                baseTableName="orders"
+                baseColumnNames="customer_id"
+                constraintName="customer_id_fk"
+                referencedTableName="customer"
+                referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>

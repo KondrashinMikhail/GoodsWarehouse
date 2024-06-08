@@ -1,5 +1,4 @@
-package mediasoft.ru.backend.models.dto.response.product;
-
+package mediasoft.ru.backend.models.projections;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -15,7 +14,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateProductResponseDTO {
+public class ProductInOrderProjection {
     private UUID id;
-    private LocalDate creationDate;
+    private String name;
+    private BigDecimal quantity;
+    private BigDecimal price;
 }

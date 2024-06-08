@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,8 +41,8 @@ public class Product {
 
     private String description;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ProductCategory category;
 
     @Column(nullable = false)
@@ -55,4 +56,13 @@ public class Product {
     private LocalDate creationDate;
 
     private LocalDateTime lastModifiedDate;
+
+    @Column(nullable = false)
+    private Boolean isAvailable;
+
+    @PrePersist
+    private void defaultFields() {
+        if (this.creationDate == null) this.creationDate = LocalDate.now();
+        if (this.isAvailable == null) this.isAvailable = true;
+    }
 }
