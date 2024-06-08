@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mediasoft.ru.backend.criteria.CriteriaOptions;
+import mediasoft.ru.backend.enums.CriteriaOptions;
 import mediasoft.ru.backend.criteria.specification.LocalDateTimePredicateSpecification;
 import mediasoft.ru.backend.criteria.specification.PredicateSpecification;
 

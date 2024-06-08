@@ -2,7 +2,7 @@ package mediasoft.ru.backend.criteria.condition;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import mediasoft.ru.backend.criteria.CriteriaOptions;
+import mediasoft.ru.backend.enums.CriteriaOptions;
 import mediasoft.ru.backend.criteria.specification.PredicateSpecification;
 
 
