@@ -3,6 +3,7 @@ package mediasoft.ru.backend.services.order;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mediasoft.ru.backend.configurations.rest.RestConfiguration;
 import mediasoft.ru.backend.enums.OrderStatus;
 import mediasoft.ru.backend.exceptions.AccessDeniedException;
 import mediasoft.ru.backend.exceptions.BlockedCustomerException;
@@ -22,10 +23,10 @@ import mediasoft.ru.backend.models.entities.Product;
 import mediasoft.ru.backend.models.mappers.OrderMapper;
 import mediasoft.ru.backend.repositories.OrderProductRepository;
 import mediasoft.ru.backend.repositories.OrderRepository;
+import mediasoft.ru.backend.services.account.AccountServiceClient;
+import mediasoft.ru.backend.services.crm.CrmServiceClient;
 import mediasoft.ru.backend.services.customer.CustomerService;
 import mediasoft.ru.backend.services.product.ProductService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -37,7 +38,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,12 +51,9 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
     private final WebClient webClientAccount;
     private final WebClient webClientCrm;
-
-    @Value("${rest.account-service.methods.get-account-number}")
-    private String GET_ACCOUNT_NUMBER_METHOD;
-
-    @Value("${rest.crm-service.methods.get-inn}")
-    private String GET_INN_METHOD;
+    private final RestConfiguration restConfiguration;
+    private final AccountServiceClient accountServiceClient;
+    private final CrmServiceClient crmServiceClient;
 
     @Override
     @Transactional
@@ -183,36 +180,12 @@ public class OrderServiceImpl implements OrderService {
         List<Order> suitableOrders = orderRepository.findAllByStatusIn(List.of(OrderStatus.CREATED, OrderStatus.CONFIRMED));
         List<String> logins = suitableOrders.stream().map(order -> order.getCustomer().getLogin()).toList();
 
-        Map<String, String> innMap;
-        Map<String, String> accountNumberMap;
-
-        CompletableFuture<Map<String, String>> fetchInn = CompletableFuture.supplyAsync(() -> webClientCrm
-                .post()
-                .uri(GET_INN_METHOD)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(logins)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block());
-
-        CompletableFuture<Map<String, String>> fetchAccountNumber = CompletableFuture.supplyAsync(() -> webClientAccount
-                .post()
-                .uri(GET_ACCOUNT_NUMBER_METHOD)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(logins)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block());
-
         List<OrderProduct> orderProducts = suitableOrders.stream().map(Order::getOrderProducts).flatMap(List::stream).toList();
 
         Map<UUID, List<OrderInfo>> result = new HashMap<>();
 
         Map<UUID, List<OrderProduct>> orderProductsMap = orderProducts.stream()
                 .collect(Collectors.groupingBy(orderProduct -> orderProduct.getProduct().getId()));
-
-        innMap = fetchInn.join();
-        accountNumberMap = fetchAccountNumber.join();
 
         orderProductsMap.forEach((productId, orderProduct) -> result.put(
                 productId,
@@ -221,6 +194,9 @@ public class OrderServiceImpl implements OrderService {
                     Customer customer = order.getCustomer();
                     String login = customer.getLogin();
 
+                    Map<String, String> accountNumbers = accountServiceClient.getAccountNumbers(logins).join();
+                    Map<String, String> inns = crmServiceClient.getCrms(logins).join();
+
                     return OrderInfo.builder()
                             .id(order.getId())
                             .status(order.getStatus())
@@ -228,8 +204,8 @@ public class OrderServiceImpl implements OrderService {
                             .customer(CustomerInfo.builder()
                                     .id(customer.getId())
                                     .email(customer.getMail())
-                                    .inn(innMap.get(login))
-                                    .accountNumber(accountNumberMap.get(login))
+                                    .inn(accountNumbers.get(login))
+                                    .accountNumber(inns.get(login))
                                     .build())
                             .quantity(op.getProductCount())
                             .build();

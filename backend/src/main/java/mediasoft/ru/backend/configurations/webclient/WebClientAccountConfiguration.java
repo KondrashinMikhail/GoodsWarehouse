@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.configurations;
+package mediasoft.ru.backend.configurations.webclient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,12 +10,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "rest.crm-service")
-public class WebClientCrmConfiguration {
+@ConfigurationProperties(prefix = "rest.account-service")
+public class WebClientAccountConfiguration {
     private String host;
 
     @Bean
-    protected WebClient webClientCrm() {
+    protected WebClient webClientAccount() {
         return WebClient.builder()
                 .baseUrl(host)
                 .build();

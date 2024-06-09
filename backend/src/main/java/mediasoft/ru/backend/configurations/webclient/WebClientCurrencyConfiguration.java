@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.configurations;
+package mediasoft.ru.backend.configurations.webclient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,12 +10,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "rest.account-service")
-public class WebClientAccountConfiguration {
+@ConfigurationProperties(prefix = "rest.currency-service")
+public class WebClientCurrencyConfiguration {
     private String host;
+    private Long retryCount;
 
     @Bean
-    protected WebClient webClientAccount() {
+    protected WebClient webClientCurrency() {
         return WebClient.builder()
                 .baseUrl(host)
                 .build();
