@@ -52,6 +52,11 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver-dns-native-macos</artifactId>
         </dependency>
+        <dependency>
+            <groupId>mediasoft.ru</groupId>
+            <artifactId>exceptionsetarter</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
 
 </project>
