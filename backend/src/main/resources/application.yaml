@@ -34,3 +34,7 @@ currency-service:
     get-currency: /api/currencies/get
   mock:
     enabled: true
+minio:
+  bucket: ${MINIO_BUCKET:backend}
+  access-key: ${MINIO_ACCESS_KEY:admin}
+  secret-key: ${MINIO_SECRET_KEY:password}

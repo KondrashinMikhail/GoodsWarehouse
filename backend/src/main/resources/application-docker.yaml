@@ -9,3 +9,5 @@ spring:
 app:
   scheduling:
     enabled: true
+minio:
+  url: ${MINIO_ENDPOINT:http://minio:9000}
