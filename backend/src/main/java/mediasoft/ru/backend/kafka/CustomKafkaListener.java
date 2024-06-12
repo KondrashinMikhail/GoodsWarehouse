@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import mediasoft.ru.backend.exceptions.NotImplementedException;
 import mediasoft.ru.backend.kafka.handlers.KafkaEvent;
 import mediasoft.ru.backend.kafka.handlers.KafkaEventHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 
 @Component
 @AllArgsConstructor
+@ConditionalOnProperty(prefix = "kafka", name = "enabled", havingValue = "true")
 public class CustomKafkaListener {
     private Set<KafkaEventHandler<KafkaEvent>> eventHandlers;
 

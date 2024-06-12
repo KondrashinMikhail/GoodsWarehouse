@@ -6,7 +6,6 @@ server:
     include-exception: false
 spring:
   kafka:
-    bootstrap-servers: ${KAFKA_SERVERS:PLAINTEXT_HOST://localhost:9091}
     template:
       default-topic: ${KAFKA_TOPIC:test-topic}
     consumer:
