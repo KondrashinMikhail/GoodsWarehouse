@@ -11,7 +11,7 @@
             </not>
         </preConditions>
         <createTable tableName="customer">
-            <column name="id" type="bigserial">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="login" type="varchar">

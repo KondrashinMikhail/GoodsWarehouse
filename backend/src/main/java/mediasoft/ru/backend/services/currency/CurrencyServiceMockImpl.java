@@ -15,7 +15,7 @@ import static mediasoft.ru.backend.configurations.CurrencyCacheConfig.CACHE_CURR
 @Service
 @Slf4j
 @Primary
-@ConditionalOnProperty(name = "currency-service.mock.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "rest.currency-service.mock.enabled", havingValue = "true")
 public class CurrencyServiceMockImpl implements CurrencyService {
     @Override
     @SneakyThrows

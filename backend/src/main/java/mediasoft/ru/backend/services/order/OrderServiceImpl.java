@@ -1,15 +1,18 @@
 package mediasoft.ru.backend.services.order;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mediasoft.ru.backend.configurations.rest.RestConfiguration;
 import mediasoft.ru.backend.enums.OrderStatus;
 import mediasoft.ru.backend.exceptions.AccessDeniedException;
 import mediasoft.ru.backend.exceptions.BlockedCustomerException;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
 import mediasoft.ru.backend.models.dto.request.order.CreateOrderRequestDTO;
 import mediasoft.ru.backend.models.dto.request.product.ProductInOrderRequestDTO;
+import mediasoft.ru.backend.models.dto.response.customer.CustomerInfo;
 import mediasoft.ru.backend.models.dto.response.order.CreateOrderResponseDTO;
+import mediasoft.ru.backend.models.dto.response.order.OrderInfo;
 import mediasoft.ru.backend.models.dto.response.order.OrderInfoResponseDTO;
 import mediasoft.ru.backend.models.dto.response.order.UpdateOrderStatusResponseDTO;
 import mediasoft.ru.backend.models.dto.response.product.ProductInOrderResponseDTO;
@@ -20,31 +23,41 @@ import mediasoft.ru.backend.models.entities.Product;
 import mediasoft.ru.backend.models.mappers.OrderMapper;
 import mediasoft.ru.backend.repositories.OrderProductRepository;
 import mediasoft.ru.backend.repositories.OrderRepository;
+import mediasoft.ru.backend.services.account.AccountServiceClient;
+import mediasoft.ru.backend.services.crm.CrmServiceClient;
 import mediasoft.ru.backend.services.customer.CustomerService;
 import mediasoft.ru.backend.services.product.ProductService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    private OrderRepository orderRepository;
-    private OrderProductRepository orderProductRepository;
-    private OrderMapper orderMapper;
-    private CustomerService customerService;
-    private ProductService productService;
+    private final OrderRepository orderRepository;
+    private final OrderProductRepository orderProductRepository;
+    private final OrderMapper orderMapper;
+    private final CustomerService customerService;
+    private final ProductService productService;
+    private final WebClient webClientAccount;
+    private final WebClient webClientCrm;
+    private final RestConfiguration restConfiguration;
+    private final AccountServiceClient accountServiceClient;
+    private final CrmServiceClient crmServiceClient;
 
     @Override
     @Transactional
-    public CreateOrderResponseDTO createOrder(Long customerId, CreateOrderRequestDTO createOrderRequestDTO) {
+    public CreateOrderResponseDTO createOrder(UUID customerId, CreateOrderRequestDTO createOrderRequestDTO) {
         String deliveryAddress = createOrderRequestDTO.getDeliveryAddress();
         Customer customer = customerService.getEntityById(customerId);
         if (!customer.getIsActive())
@@ -70,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void changeProductsInOrder(Long customerId, List<ProductInOrderRequestDTO> productsInOrderRequest, UUID orderId) {
+    public void changeProductsInOrder(UUID customerId, List<ProductInOrderRequestDTO> productsInOrderRequest, UUID orderId) {
         Order order = getEntityById(orderId);
         checkOrderStatusAccess(order, OrderStatus.CREATED);
         checkCustomerToOrderAccess(customerId, order);
@@ -99,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderInfoResponseDTO getOrder(Long customerId, UUID orderId) {
+    public OrderInfoResponseDTO getOrder(UUID customerId, UUID orderId) {
         Order order = getEntityById(orderId);
         checkCustomerToOrderAccess(customerId, order);
 
@@ -116,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void deleteOrder(Long customerId, UUID orderId) {
+    public void deleteOrder(UUID customerId, UUID orderId) {
         Order order = getEntityById(orderId);
         checkOrderStatusAccess(order, OrderStatus.CREATED);
         checkCustomerToOrderAccess(customerId, order);
@@ -133,7 +146,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public UpdateOrderStatusResponseDTO updateOrderStatus(Long customerId, OrderStatus status, UUID orderId) {
+    public UpdateOrderStatusResponseDTO updateOrderStatus(UUID customerId, OrderStatus status, UUID orderId) {
         Order order = getEntityById(orderId);
         checkCustomerToOrderAccess(customerId, order);
         order.setStatus(status);
@@ -161,7 +174,49 @@ public class OrderServiceImpl implements OrderService {
         productService.decrementProductCount(product, productCount);
     }
 
-    private void checkCustomerToOrderAccess(Long customerId, Order order) {
+    @Override
+    @Transactional
+    public Map<UUID, List<OrderInfo>> getProductsInOrders() {
+        List<Order> suitableOrders = orderRepository.findAllByStatusIn(List.of(OrderStatus.CREATED, OrderStatus.CONFIRMED));
+        List<String> logins = suitableOrders.stream().map(order -> order.getCustomer().getLogin()).toList();
+
+        List<OrderProduct> orderProducts = suitableOrders.stream().map(Order::getOrderProducts).flatMap(List::stream).toList();
+
+        Map<UUID, List<OrderInfo>> result = new HashMap<>();
+
+        Map<UUID, List<OrderProduct>> orderProductsMap = orderProducts.stream()
+                .collect(Collectors.groupingBy(orderProduct -> orderProduct.getProduct().getId()));
+
+        orderProductsMap.forEach((productId, orderProduct) -> result.put(
+                productId,
+                orderProduct.stream().map(op -> {
+                    Order order = op.getOrder();
+                    Customer customer = order.getCustomer();
+                    String login = customer.getLogin();
+
+                    Map<String, String> accountNumbers = accountServiceClient.getAccountNumbers(logins).join();
+                    Map<String, String> inns = crmServiceClient.getCrms(logins).join();
+
+                    return OrderInfo.builder()
+                            .id(order.getId())
+                            .status(order.getStatus())
+                            .deliveryAddress(order.getDeliveryAddress())
+                            .customer(CustomerInfo.builder()
+                                    .id(customer.getId())
+                                    .email(customer.getMail())
+                                    .inn(accountNumbers.get(login))
+                                    .accountNumber(inns.get(login))
+                                    .build())
+                            .quantity(op.getProductCount())
+                            .build();
+
+                }).toList())
+        );
+
+        return result;
+    }
+
+    private void checkCustomerToOrderAccess(UUID customerId, Order order) {
         if (!Objects.equals(order.getCustomer().getId(), customerId))
             throw new AccessDeniedException(String.format("Customer with id - %s can not perform actions on the order %s", customerId, order.getId()));
         Customer customer = order.getCustomer();
