@@ -1,14 +1,14 @@
 package mediasoft.ru.backend.services.order;
 
 import mediasoft.ru.backend.enums.OrderStatus;
-import mediasoft.ru.backend.models.dto.request.order.CreateOrderRequestDTO;
-import mediasoft.ru.backend.models.dto.request.product.ProductInOrderRequestDTO;
-import mediasoft.ru.backend.models.dto.response.order.CreateOrderResponseDTO;
-import mediasoft.ru.backend.models.dto.response.order.OrderInfo;
-import mediasoft.ru.backend.models.dto.response.order.OrderInfoResponseDTO;
-import mediasoft.ru.backend.models.dto.response.order.UpdateOrderStatusResponseDTO;
-import mediasoft.ru.backend.models.entities.Order;
-import mediasoft.ru.backend.models.entities.Product;
+import mediasoft.ru.backend.web.request.order.CreateOrderRequestDTO;
+import mediasoft.ru.backend.web.request.product.ProductInOrderRequestDTO;
+import mediasoft.ru.backend.web.response.order.CreateOrderResponseDTO;
+import mediasoft.ru.backend.web.response.order.OrderInfo;
+import mediasoft.ru.backend.web.response.order.OrderInfoResponseDTO;
+import mediasoft.ru.backend.web.response.order.UpdateOrderStatusResponseDTO;
+import mediasoft.ru.backend.persistence.entities.Order;
+import mediasoft.ru.backend.persistence.entities.Product;
 
 import java.math.BigDecimal;
 import java.util.List;

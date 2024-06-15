@@ -3,8 +3,8 @@ package mediasoft.ru.backend.services.customer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
-import mediasoft.ru.backend.models.entities.Customer;
-import mediasoft.ru.backend.repositories.CustomerRepository;
+import mediasoft.ru.backend.persistence.entities.Customer;
+import mediasoft.ru.backend.persistence.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

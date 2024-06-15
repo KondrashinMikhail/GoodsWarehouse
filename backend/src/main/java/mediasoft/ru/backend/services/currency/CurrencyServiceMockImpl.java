@@ -2,7 +2,7 @@ package mediasoft.ru.backend.services.currency;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import mediasoft.ru.backend.models.dto.ExchangeRateDTO;
+import mediasoft.ru.backend.models.ExchangeRateDTO;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;

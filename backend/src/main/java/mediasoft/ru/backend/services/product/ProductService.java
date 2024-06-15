@@ -1,13 +1,13 @@
 package mediasoft.ru.backend.services.product;
 
-import mediasoft.ru.backend.criteria.condition.Condition;
-import mediasoft.ru.backend.models.dto.ProductDTO;
-import mediasoft.ru.backend.models.dto.request.product.ProductInOrderRequestDTO;
-import mediasoft.ru.backend.models.dto.response.product.CreateProductResponseDTO;
-import mediasoft.ru.backend.models.dto.response.product.ProductInOrderResponseDTO;
-import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
-import mediasoft.ru.backend.models.dto.response.product.UpdateProductResponseDTO;
-import mediasoft.ru.backend.models.entities.Product;
+import mediasoft.ru.backend.services.criteria.condition.Condition;
+import mediasoft.ru.backend.models.ProductDTO;
+import mediasoft.ru.backend.web.request.product.ProductInOrderRequestDTO;
+import mediasoft.ru.backend.web.response.product.CreateProductResponseDTO;
+import mediasoft.ru.backend.web.response.product.ProductInOrderResponseDTO;
+import mediasoft.ru.backend.web.response.product.ProductInfoResponseDTO;
+import mediasoft.ru.backend.web.response.product.UpdateProductResponseDTO;
+import mediasoft.ru.backend.persistence.entities.Product;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
