@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backend
+spec:
+  containers:
+    - name: backend
+      image: kondrashinm/backend:latest
+      env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: docker
+      ports:
+        - containerPort: 8080
+          name: app
+        - containerPort: 9090
+          name: actuator
+

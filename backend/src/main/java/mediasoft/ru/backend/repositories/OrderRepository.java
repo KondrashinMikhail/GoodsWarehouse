@@ -1,11 +1,13 @@
 package mediasoft.ru.backend.repositories;
 
+import mediasoft.ru.backend.enums.OrderStatus;
 import mediasoft.ru.backend.models.entities.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,4 +20,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
                  where o.id = :orderId
             """)
     Optional<Order> findByIdFetchProducts(UUID orderId);
+
+    List<Order> findAllByStatusIn(List<OrderStatus> statuses);
 }
