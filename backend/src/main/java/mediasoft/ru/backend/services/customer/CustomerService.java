@@ -1,6 +1,6 @@
 package mediasoft.ru.backend.services.customer;
 
-import mediasoft.ru.backend.models.entities.Customer;
+import mediasoft.ru.backend.persistence.entities.Customer;
 
 import java.util.UUID;
 
