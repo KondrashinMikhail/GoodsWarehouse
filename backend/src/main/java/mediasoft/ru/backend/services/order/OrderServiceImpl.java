@@ -3,6 +3,7 @@ package mediasoft.ru.backend.services.order;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mediasoft.ru.backend.configurations.rest.RestConfiguration;
 import mediasoft.ru.backend.enums.OrderStatus;
 import mediasoft.ru.backend.exceptions.AccessDeniedException;
 import mediasoft.ru.backend.exceptions.BlockedCustomerException;
@@ -27,6 +28,7 @@ import mediasoft.ru.backend.services.crm.CrmServiceClient;
 import mediasoft.ru.backend.services.customer.CustomerService;
 import mediasoft.ru.backend.services.product.ProductService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
