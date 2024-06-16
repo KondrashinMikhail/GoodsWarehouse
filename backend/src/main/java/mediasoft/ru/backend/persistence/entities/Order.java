@@ -20,6 +20,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,6 +50,10 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     private List<OrderProduct> orderProducts;
+
+    private String processId;
+
+    private LocalDate deliveryDate;
 
     @PrePersist
     private void defaultFields() {

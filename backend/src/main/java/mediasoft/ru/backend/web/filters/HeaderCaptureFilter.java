@@ -5,11 +5,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import mediasoft.ru.backend.services.providers.CurrencyProvider;
 import mediasoft.ru.backend.configurations.HeadersConfiguration;
 import mediasoft.ru.backend.enums.CurrencyEnum;
+import mediasoft.ru.backend.services.providers.CurrencyProvider;
+import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,5 +35,19 @@ public class HeaderCaptureFilter extends OncePerRequestFilter {
                 .ifPresent(currencyProvider::setCurrency);
 
         filterChain.doFilter(request, response);
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(false);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("POST");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }

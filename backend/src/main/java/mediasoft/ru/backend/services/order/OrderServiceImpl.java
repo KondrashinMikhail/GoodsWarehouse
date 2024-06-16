@@ -7,6 +7,19 @@ import mediasoft.ru.backend.enums.OrderStatus;
 import mediasoft.ru.backend.exceptions.AccessDeniedException;
 import mediasoft.ru.backend.exceptions.BlockedCustomerException;
 import mediasoft.ru.backend.exceptions.ContentNotFoundException;
+import mediasoft.ru.backend.mappers.OrderMapper;
+import mediasoft.ru.backend.persistence.entities.Customer;
+import mediasoft.ru.backend.persistence.entities.Order;
+import mediasoft.ru.backend.persistence.entities.OrderProduct;
+import mediasoft.ru.backend.persistence.entities.Product;
+import mediasoft.ru.backend.persistence.repositories.OrderProductRepository;
+import mediasoft.ru.backend.persistence.repositories.OrderRepository;
+import mediasoft.ru.backend.services.account.AccountServiceClient;
+import mediasoft.ru.backend.services.crm.CrmServiceClient;
+import mediasoft.ru.backend.services.customer.CustomerService;
+import mediasoft.ru.backend.services.orchestrator.OrchestratorService;
+import mediasoft.ru.backend.services.product.ProductService;
+import mediasoft.ru.backend.web.request.order.CamundaProcessOrderRequest;
 import mediasoft.ru.backend.web.request.order.CreateOrderRequestDTO;
 import mediasoft.ru.backend.web.request.product.ProductInOrderRequestDTO;
 import mediasoft.ru.backend.web.response.customer.CustomerInfo;
@@ -15,20 +28,10 @@ import mediasoft.ru.backend.web.response.order.OrderInfo;
 import mediasoft.ru.backend.web.response.order.OrderInfoResponseDTO;
 import mediasoft.ru.backend.web.response.order.UpdateOrderStatusResponseDTO;
 import mediasoft.ru.backend.web.response.product.ProductInOrderResponseDTO;
-import mediasoft.ru.backend.persistence.entities.Customer;
-import mediasoft.ru.backend.persistence.entities.Order;
-import mediasoft.ru.backend.persistence.entities.OrderProduct;
-import mediasoft.ru.backend.persistence.entities.Product;
-import mediasoft.ru.backend.mappers.OrderMapper;
-import mediasoft.ru.backend.persistence.repositories.OrderProductRepository;
-import mediasoft.ru.backend.persistence.repositories.OrderRepository;
-import mediasoft.ru.backend.services.account.AccountServiceClient;
-import mediasoft.ru.backend.services.crm.CrmServiceClient;
-import mediasoft.ru.backend.services.customer.CustomerService;
-import mediasoft.ru.backend.services.product.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
     private final AccountServiceClient accountServiceClient;
     private final CrmServiceClient crmServiceClient;
+    private final OrchestratorService orchestratorService;
 
     @Override
     @Transactional
@@ -136,8 +140,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void confirmOrder(UUID orderId) {
-        //TODO: сделать реализацию позже
+    @Transactional
+    public String confirmOrder(UUID orderId) {
+        Order order = getEntityById(orderId);
+        String login = order.getCustomer().getLogin();
+
+        String processId = orchestratorService.startProcess(
+                CamundaProcessOrderRequest.builder()
+                        .orderId(order.getId())
+                        .customerId(order.getCustomer().getId())
+                        .accountNumber(accountServiceClient.getAccountNumbers(List.of(login)).join().get(login))
+                        .inn(crmServiceClient.getCrms(List.of(login)).join().get(login))
+                        .deliveryAddress(order.getDeliveryAddress())
+                        .totalPrice(order.getOrderProducts().stream().map(OrderProduct::getProductCount).reduce(BigDecimal.ZERO, BigDecimal::add))
+                        .build()
+        );
+
+        log.info("Created process with id - {}", processId);
+
+        order.setStatus(OrderStatus.PROCESSING);
+        order.setProcessId(processId);
+        orderRepository.save(order);
+        log.info("Updated order with id - {}, set status - {} and process id - {}", order.getId(), order.getStatus(), processId);
+
+        return processId;
+    }
+
+    @Override
+    public void setDeliveryDate(LocalDate deliveryDate, UUID orderId) {
+        Order order = getEntityById(orderId);
+        order.setDeliveryDate(deliveryDate);
+        Order updatedOrder = orderRepository.save(order);
+        log.info("Set delivery date - {} for order with id - {}", deliveryDate, updatedOrder.getId());
     }
 
     @Override
@@ -146,7 +180,7 @@ public class OrderServiceImpl implements OrderService {
         checkCustomerToOrderAccess(customerId, order);
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
-        log.info("Updated order with id - {}, set status - {}", updatedOrder.getId(), updatedOrder.getStatus());
+        log.info("Updated order with id - {}, new status - {}", updatedOrder.getId(), updatedOrder.getStatus());
         return orderMapper.mapModelToUpdateOrderStatusDTO(updatedOrder);
     }
 

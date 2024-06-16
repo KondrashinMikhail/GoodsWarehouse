@@ -1,6 +1,8 @@
 package mediasoft.ru.backend.web.controllers;
 
 import lombok.AllArgsConstructor;
+import mediasoft.ru.backend.services.order.OrderService;
+import mediasoft.ru.backend.web.request.order.AddDeliveryDateRequest;
 import mediasoft.ru.backend.web.request.order.ChangeOrderStatusRequestDTO;
 import mediasoft.ru.backend.web.request.order.CreateOrderRequestDTO;
 import mediasoft.ru.backend.web.request.product.ProductInOrderRequestDTO;
@@ -8,7 +10,6 @@ import mediasoft.ru.backend.web.response.order.CreateOrderResponseDTO;
 import mediasoft.ru.backend.web.response.order.OrderInfo;
 import mediasoft.ru.backend.web.response.order.OrderInfoResponseDTO;
 import mediasoft.ru.backend.web.response.order.UpdateOrderStatusResponseDTO;
-import mediasoft.ru.backend.services.order.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,8 +63,13 @@ public class OrderController {
     }
 
     @PostMapping("/{orderId}/confirm")
-    public void confirmOrder(@PathVariable UUID orderId) {
-        orderService.confirmOrder(orderId);
+    public ResponseEntity<String> confirmOrder(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(orderService.confirmOrder(orderId));
+    }
+
+    @PatchMapping("/delivery")
+    public void deliveryOrder(@RequestBody AddDeliveryDateRequest request) {
+        orderService.setDeliveryDate(request.getDeliveryDate(), request.getOrderId());
     }
 
     @PatchMapping("/{orderId}/status")
