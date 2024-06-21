@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ImageService {
-    void attachImage(UUID productId, String path);
+    void attachImage(UUID productId, UUID imageId);
 
     String getProductName(UUID productId);
 

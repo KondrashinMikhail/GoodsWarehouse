@@ -17,12 +17,11 @@ public class ImageServiceImpl implements ImageService {
     private ImageRepository imageRepository;
 
     @Override
-    public void attachImage(UUID productId, String path) {
-        if (imageRepository.existsByProductIdAndPath(productId, path)) return;
+    public void attachImage(UUID productId, UUID imageId) {
         Product product = productService.getEntityById(productId);
         imageRepository.save(Image.builder()
+                .id(imageId)
                 .product(product)
-                .path(path)
                 .build());
     }
 

@@ -11,5 +11,4 @@ import java.util.UUID;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, UUID>, JpaSpecificationExecutor<Image> {
     List<Image> findAllByProductId(UUID productId);
-    Boolean existsByProductIdAndPath(UUID productId, String path);
 }

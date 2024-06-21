@@ -1,13 +1,15 @@
 package mediasoft.ru.backend.services.filestorage;
 
-import mediasoft.ru.backend.models.entities.Image;
+import mediasoft.ru.backend.models.dto.GetMinioFileDTO;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.OutputStream;
+import java.util.UUID;
 
 public interface FileStorageService {
-    void uploadFile(String path, byte[] content);
+    UUID uploadFile(MultipartFile file);
 
-    byte[] getZip(String archiveName, List<Image> images);
+    void getZip(UUID productId, OutputStream outputStream);
 
-    byte[] getFile(String key);
+    GetMinioFileDTO getFile(String key);
 }

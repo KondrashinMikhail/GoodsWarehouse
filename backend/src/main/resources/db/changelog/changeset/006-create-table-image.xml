@@ -14,9 +14,6 @@
             <column name="id" type="uuid">
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
-            <column name="path" type="varchar">
-                <constraints nullable="false"/>
-            </column>
             <column name="product_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
