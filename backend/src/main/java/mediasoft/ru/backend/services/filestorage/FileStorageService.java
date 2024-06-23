@@ -1,6 +1,6 @@
 package mediasoft.ru.backend.services.filestorage;
 
-import mediasoft.ru.backend.models.dto.GetMinioFileDTO;
+import mediasoft.ru.backend.models.GetMinioFileDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.OutputStream;

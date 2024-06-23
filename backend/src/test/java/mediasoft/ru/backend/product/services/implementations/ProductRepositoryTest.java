@@ -1,11 +1,11 @@
 package mediasoft.ru.backend.product.services.implementations;
 
-import mediasoft.ru.backend.criteria.condition.Condition;
-import mediasoft.ru.backend.criteria.condition.StringCondition;
+import mediasoft.ru.backend.services.criteria.condition.Condition;
+import mediasoft.ru.backend.services.criteria.condition.StringCondition;
 import mediasoft.ru.backend.enums.CriteriaOptions;
 import mediasoft.ru.backend.enums.ProductCategory;
-import mediasoft.ru.backend.models.dto.ProductDTO;
-import mediasoft.ru.backend.models.dto.response.product.ProductInfoResponseDTO;
+import mediasoft.ru.backend.models.ProductDTO;
+import mediasoft.ru.backend.web.response.product.ProductInfoResponseDTO;
 import mediasoft.ru.backend.services.product.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
