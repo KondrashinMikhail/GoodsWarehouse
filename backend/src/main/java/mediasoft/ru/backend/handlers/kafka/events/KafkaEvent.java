@@ -1,12 +1,8 @@
-package mediasoft.ru.backend.handlers.kafka;
+package mediasoft.ru.backend.handlers.kafka.events;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import mediasoft.ru.backend.enums.KafkaEventSource;
-import mediasoft.ru.backend.models.events.CreateOrderKafkaEventDTO;
-import mediasoft.ru.backend.models.events.DeleteOrderKafkaEventDTO;
-import mediasoft.ru.backend.models.events.UpdateOrderKafkaEventDTO;
-import mediasoft.ru.backend.models.events.UpdateOrderStatusKafkaEventDTO;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "event")
 @JsonSubTypes({

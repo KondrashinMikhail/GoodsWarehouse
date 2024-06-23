@@ -3,7 +3,7 @@ package mediasoft.ru.backend.services.kafka;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import mediasoft.ru.backend.exceptions.NotImplementedException;
-import mediasoft.ru.backend.handlers.kafka.KafkaEvent;
+import mediasoft.ru.backend.handlers.kafka.events.KafkaEvent;
 import mediasoft.ru.backend.handlers.kafka.KafkaEventHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;

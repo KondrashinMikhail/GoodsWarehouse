@@ -1,6 +1,6 @@
 package mediasoft.ru.backend.mappers;
 
-import mediasoft.ru.backend.models.events.CreateOrderKafkaEventDTO;
+import mediasoft.ru.backend.handlers.kafka.events.CreateOrderKafkaEventDTO;
 import mediasoft.ru.backend.web.request.order.CreateOrderRequestDTO;
 import mediasoft.ru.backend.web.response.order.CreateOrderResponseDTO;
 import mediasoft.ru.backend.web.response.order.UpdateOrderStatusResponseDTO;

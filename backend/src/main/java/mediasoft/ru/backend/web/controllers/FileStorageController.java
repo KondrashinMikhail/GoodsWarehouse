@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.controllers;
+package mediasoft.ru.backend.web.controllers;
 
 import lombok.AllArgsConstructor;
 import mediasoft.ru.backend.services.filestorage.FileStorageService;
