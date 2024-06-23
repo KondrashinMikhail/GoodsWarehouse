@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.models.events;
+package mediasoft.ru.backend.handlers.kafka.events;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mediasoft.ru.backend.enums.KafkaEventSource;
-import mediasoft.ru.backend.handlers.kafka.KafkaEvent;
 import mediasoft.ru.backend.web.request.product.ProductInOrderRequestDTO;
 
 import java.util.List;

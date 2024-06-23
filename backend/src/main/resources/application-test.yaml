@@ -17,3 +17,5 @@ app:
     enabled: false
   scheduling:
     enabled: false
+minio:
+  url: ${MINIO_ENDPOINT:http://localhost:9000}

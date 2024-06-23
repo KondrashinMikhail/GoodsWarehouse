@@ -53,6 +53,16 @@
             <artifactId>netty-resolver-dns-native-macos</artifactId>
         </dependency>
         <dependency>
+            <groupId>mediasoft.ru</groupId>
+            <artifactId>exceptionsetarter</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.7</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
@@ -65,7 +75,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-
     </dependencies>
 
 </project>

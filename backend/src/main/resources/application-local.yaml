@@ -2,9 +2,9 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS:PLAINTEXT_HOST://localhost:9091}
   datasource:
-    username: postgres
-    password: postgres
-    url: jdbc:postgresql://localhost:5432/goods-warehouse
+    url: jdbc:h2:mem:testdb
+    username: test
+    password: test
   jpa:
     hibernate:
       ddl-auto: validate
@@ -13,3 +13,7 @@ app:
     enabled: true
   scheduling:
     enabled: false
+minio:
+  url: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: admin
+  secret-key: password

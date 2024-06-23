@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.models.events;
+package mediasoft.ru.backend.handlers.kafka.events;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mediasoft.ru.backend.enums.KafkaEventSource;
-import mediasoft.ru.backend.enums.OrderStatus;
-import mediasoft.ru.backend.handlers.kafka.KafkaEvent;
 
 import java.util.UUID;
 
@@ -17,14 +15,13 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateOrderStatusKafkaEventDTO implements KafkaEvent {
-    private UUID customerId;
+public class DeleteOrderKafkaEventDTO implements KafkaEvent {
     private UUID orderId;
-    private OrderStatus status;
+    private UUID customerId;
 
     @Override
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public KafkaEventSource getEvent() {
-        return KafkaEventSource.UPDATE_ORDER_STATUS;
+        return KafkaEventSource.DELETE_ORDER;
     }
 }

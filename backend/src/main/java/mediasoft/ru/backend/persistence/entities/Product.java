@@ -60,6 +60,10 @@ public class Product {
     @Column(nullable = false)
     private Boolean isAvailable;
 
+//    @OneToMany
+//    @JoinColumn(name = "product_id")
+//    private List<Image> images;
+
     @PrePersist
     private void defaultFields() {
         if (this.creationDate == null) this.creationDate = LocalDate.now();

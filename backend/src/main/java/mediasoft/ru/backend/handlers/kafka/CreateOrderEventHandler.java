@@ -2,7 +2,8 @@ package mediasoft.ru.backend.handlers.kafka;
 
 import lombok.AllArgsConstructor;
 import mediasoft.ru.backend.enums.KafkaEventSource;
-import mediasoft.ru.backend.models.events.CreateOrderKafkaEventDTO;
+import mediasoft.ru.backend.handlers.kafka.events.CreateOrderKafkaEventDTO;
+import mediasoft.ru.backend.handlers.kafka.events.KafkaEvent;
 import mediasoft.ru.backend.web.request.order.CreateOrderRequestDTO;
 import mediasoft.ru.backend.mappers.OrderMapper;
 import mediasoft.ru.backend.services.order.OrderService;
