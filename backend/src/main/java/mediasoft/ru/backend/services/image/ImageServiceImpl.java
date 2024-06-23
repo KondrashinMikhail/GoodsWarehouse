@@ -1,9 +1,9 @@
 package mediasoft.ru.backend.services.image;
 
 import lombok.AllArgsConstructor;
-import mediasoft.ru.backend.models.entities.Image;
-import mediasoft.ru.backend.models.entities.Product;
-import mediasoft.ru.backend.repositories.ImageRepository;
+import mediasoft.ru.backend.persistence.entities.Image;
+import mediasoft.ru.backend.persistence.entities.Product;
+import mediasoft.ru.backend.persistence.repositories.ImageRepository;
 import mediasoft.ru.backend.services.product.ProductService;
 import org.springframework.stereotype.Service;
 

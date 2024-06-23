@@ -1,6 +1,6 @@
-package mediasoft.ru.backend.repositories;
+package mediasoft.ru.backend.persistence.repositories;
 
-import mediasoft.ru.backend.models.entities.Image;
+import mediasoft.ru.backend.persistence.entities.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

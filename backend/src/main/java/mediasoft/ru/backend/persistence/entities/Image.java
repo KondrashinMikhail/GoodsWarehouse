@@ -1,4 +1,4 @@
-package mediasoft.ru.backend.models.entities;
+package mediasoft.ru.backend.persistence.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

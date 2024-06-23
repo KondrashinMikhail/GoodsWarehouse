@@ -1,6 +1,6 @@
 package mediasoft.ru.backend.services.image;
 
-import mediasoft.ru.backend.models.entities.Image;
+import mediasoft.ru.backend.persistence.entities.Image;
 
 import java.util.List;
 import java.util.UUID;

@@ -15,3 +15,5 @@ app:
     enabled: true
 minio:
   url: ${MINIO_ENDPOINT:http://minio:9000}
+  access-key: admin
+  secret-key: password

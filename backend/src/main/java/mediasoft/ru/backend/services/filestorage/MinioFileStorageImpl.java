@@ -20,7 +20,7 @@ import mediasoft.ru.backend.configurations.MinioProperties;
 import mediasoft.ru.backend.exceptions.FileException;
 import mediasoft.ru.backend.exceptions.MinioException;
 import mediasoft.ru.backend.models.GetMinioFileDTO;
-import mediasoft.ru.backend.models.entities.Image;
+import mediasoft.ru.backend.persistence.entities.Image;
 import mediasoft.ru.backend.services.image.ImageService;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.stereotype.Service;
