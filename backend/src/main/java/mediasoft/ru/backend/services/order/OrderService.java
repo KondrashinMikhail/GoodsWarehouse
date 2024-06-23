@@ -11,6 +11,7 @@ import mediasoft.ru.backend.persistence.entities.Order;
 import mediasoft.ru.backend.persistence.entities.Product;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,7 +25,9 @@ public interface OrderService {
 
     void deleteOrder(UUID customerId, UUID orderId);
 
-    void confirmOrder(UUID orderId);
+    String confirmOrder(UUID orderId);
+
+    void setDeliveryDate(LocalDate deliveryDate, UUID orderId);
 
     UpdateOrderStatusResponseDTO updateOrderStatus(UUID customerId, OrderStatus status, UUID orderId);
 

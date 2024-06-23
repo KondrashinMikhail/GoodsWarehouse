@@ -13,4 +13,5 @@ public class Methods {
     private String getCurrency;
     private String getAccountNumber;
     private String getInn;
+    private String startProcess;
 }

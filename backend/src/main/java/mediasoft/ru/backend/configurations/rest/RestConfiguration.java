@@ -17,4 +17,5 @@ public class RestConfiguration {
     private RestServiceInfo currencyService;
     private RestServiceInfo crmService;
     private RestServiceInfo accountService;
+    private RestServiceInfo orchestratorService;
 }

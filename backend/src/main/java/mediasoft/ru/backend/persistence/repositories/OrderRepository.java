@@ -22,4 +22,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     Optional<Order> findByIdFetchProducts(UUID orderId);
 
     List<Order> findAllByStatusIn(List<OrderStatus> statuses);
+
+    Order findByProcessId(String processId);
 }
